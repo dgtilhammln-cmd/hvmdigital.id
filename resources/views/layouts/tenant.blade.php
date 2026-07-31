@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') — HVM Digital</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @php
         $faviconUrl = setting('favicon') ? get_image_url(setting('favicon')) : asset('favicon.ico');
         $faviconExt = pathinfo($faviconUrl, PATHINFO_EXTENSION);
@@ -22,7 +22,7 @@
     @stack('head')
     <style>
         [x-cloak] { display: none !important; }
-        * { font-family: 'Inter', sans-serif; }
+        * { font-family: 'Montserrat', sans-serif !important; }
 
         /* Sidebar */
         .admin-sidebar {
@@ -156,7 +156,7 @@
                 <img src="{{ $faviconUrl }}" alt="Logo HVM" style="width:36px;height:36px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,255,255,0.08);">
                 <div>
                     <div style="color:#fff;font-weight:700;font-size:14px;line-height:1.2;">HVM Digital</div>
-                    <div style="color:rgba(255,255,255,0.3);font-size:11px;">Tenant Dashboard</div>
+                    <div style="color:rgba(255,255,255,0.3);font-size:11px;font-weight:300;">Bisnis Dashboard</div>
                 </div>
             </div>
         </div>
