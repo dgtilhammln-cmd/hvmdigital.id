@@ -87,8 +87,12 @@ class SitemapController extends Controller
             ],
         ];
 
-        // City landing pages
-        foreach ($cities as $cityKey => $cityConfig) {
+        // City landing pages — hanya Surabaya & Lamongan yang di-index
+        $priorityCities = ['surabaya', 'lamongan'];
+        foreach ($priorityCities as $cityKey) {
+            $cityConfig = $cities[$cityKey] ?? null;
+            if (!$cityConfig) continue;
+
             $lp = LandingPage::where('city_key', $cityKey)->first();
             $lastmod = $lp && $lp->updated_at ? $lp->updated_at->toAtomString() : $siteLastMod;
 

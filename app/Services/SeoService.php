@@ -156,6 +156,13 @@ class SeoService
             $schemas[] = $this->schema->faq($landingData['faqs']);
         }
 
+        // Hanya Surabaya & Lamongan yang di-index oleh Google
+        $indexedCities = ['surabaya', 'lamongan'];
+        $cityKey = $cityConfig['key'] ?? '';
+        $robots = in_array($cityKey, $indexedCities)
+            ? 'index, follow, max-image-preview:large, max-snippet:-1'
+            : 'noindex, follow';
+
         return $this->generate([
             'title'         => $cityConfig['title'],
             'description'   => $cityConfig['description'],
@@ -169,6 +176,7 @@ class SeoService
             'geo_position'  => ($cityConfig['lat'] ?? 0) . ';' . ($cityConfig['lng'] ?? 0),
             'icbm'          => ($cityConfig['lat'] ?? 0) . ', ' . ($cityConfig['lng'] ?? 0),
             'schemas'       => $schemas,
+            'robots'        => $robots,
         ]);
     }
 

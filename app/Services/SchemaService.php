@@ -32,13 +32,6 @@ class SchemaService
                 'closes' => '21:00',
             ],
             'hasMap' => 'https://www.google.com/maps/search/?api=1&query=HVM+Digital+Surabaya+Jl.+Rungkut+Lor+VII+Dalam',
-            'aggregateRating' => [
-                '@type' => 'AggregateRating',
-                'ratingValue' => '4.9',
-                'bestRating' => '5',
-                'worstRating' => '1',
-                'reviewCount' => '1984',
-            ],
             'contactPoint' => [
                 '@type' => 'ContactPoint',
                 'telephone' => '+62851-7998-2373',
@@ -95,13 +88,6 @@ class SchemaService
             'paymentAccepted' => 'Cash, Transfer Bank',
             'openingHours' => 'Mo,Tu,We,Th,Fr,Sa 08:00-21:00',
             'hasMap' => 'https://www.google.com/maps/search/?api=1&query=HVM+Digital+Surabaya+Jl.+Rungkut+Lor+VII+Dalam',
-            'aggregateRating' => [
-                '@type' => 'AggregateRating',
-                'ratingValue' => '4.9',
-                'bestRating' => '5',
-                'worstRating' => '1',
-                'reviewCount' => '1984',
-            ],
             'address' => [
                 '@type' => 'PostalAddress',
                 'streetAddress' => 'Jl. Rungkut Lor VII Dalam',
@@ -142,13 +128,6 @@ class SchemaService
             'paymentAccepted' => 'Cash, Transfer Bank',
             'openingHours' => 'Mo,Tu,We,Th,Fr,Sa 08:00-21:00',
             'hasMap' => 'https://www.google.com/maps/search/?api=1&query=HVM+Digital+Bekasi+Sentra+Bisnis+Kota+Harapan+Indah',
-            'aggregateRating' => [
-                '@type' => 'AggregateRating',
-                'ratingValue' => '4.9',
-                'bestRating' => '5',
-                'worstRating' => '1',
-                'reviewCount' => '845',
-            ],
             'address' => [
                 '@type' => 'PostalAddress',
                 'streetAddress' => 'Sentra Bisnis Kota Harapan Indah Blok SS No 11',
@@ -174,10 +153,6 @@ class SchemaService
 
     public function localBusiness(string $city, array $cityData): array
     {
-        // Seeded unique review count per city (consistent, not hardcoded 87 everywhere)
-        $seed        = crc32($cityData['key'] ?? $city);
-        $reviewCount = (abs($seed) % 300) + 1650;
-
         // Accurate postal code per city (not hardcoded to Surabaya 60293)
         $postalMap = [
             'jakarta'    => '10110', 'surabaya'   => '60111', 'bali'       => '80117',
@@ -273,14 +248,7 @@ class SchemaService
                 'opens'     => '08:00',
                 'closes'    => '21:00',
             ],
-            'aggregateRating' => [
-                '@type'       => 'AggregateRating',
-                'ratingValue' => '4.9',
-                'bestRating'  => '5',
-                'worstRating' => '1',
-                'reviewCount' => (string) $reviewCount,
-            ],
-            'datePublished' => '2023-01-01',
+            'datePublished' => '2026-04-15',
             'dateModified'  => now()->format('Y-m-d'),
         ];
     }
