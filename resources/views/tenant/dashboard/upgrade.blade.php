@@ -94,14 +94,14 @@
 
             {{-- Primary Result --}}
             <template x-if="primaryResult">
-                <div style="border-radius:16px;padding:20px 24px;margin-bottom:14px;border:2px solid;"
-                     :style="primaryResult.available ? 'border-color:#9acb03;background:linear-gradient(135deg,rgba(154,203,3,0.04) 0%,#fff 60%);' : 'border-color:#fca5a5;background:#fff;'">
+                <div style="border-radius:20px;padding:22px 26px;margin-bottom:14px;border:1.5px solid;"
+                     :style="primaryResult.available ? 'border-color:#e8f5d0;background:linear-gradient(140deg,rgba(154,203,3,0.03) 0%,#fff 70%);' : 'border-color:#f5f5f5;background:#fafafa;'">
                     
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
                         <span style="font-size:11px;font-weight:500;letter-spacing:0.02em;"
-                              :style="primaryResult.available ? 'color:#15803d;' : 'color:#ef4444;'"
-                              x-text="primaryResult.available ? '✓ Sesuai Permintaan' : '· Tidak tersedia'"></span>
-                        <span x-show="!primaryResult.available" style="font-size:11px;font-weight:300;color:#d1d5db;">— cek alternatif di bawah</span>
+                              :style="primaryResult.available ? 'color:#6ab04c;' : 'color:#ccc;'"
+                              x-text="primaryResult.available ? '✓ Sesuai permintaan' : '· tidak tersedia'"></span>
+                        <span x-show="!primaryResult.available" style="font-size:11px;font-weight:300;color:#e0e0e0;">— cek alternatif di bawah</span>
                     </div>
 
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
@@ -133,18 +133,18 @@
             {{-- Other TLDs - COMPACT LIST --}}
             <div x-show="otherResults.length > 0" style="background:#fff;border-radius:14px;border:1.5px solid #e5e7eb;overflow:hidden;">
                 {{-- Header + Filter --}}
-                <div style="padding:14px 20px;border-bottom:1px solid #f0f0f0;">
+                <div style="padding:14px 20px;border-bottom:1px solid #f5f5f5;">
                     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-                        <span style="font-size:13px;font-weight:700;color:#111827;">Pilihan domain lainnya</span>
-                        <div style="display:flex;gap:6px;">
+                        <span style="font-size:12px;font-weight:600;color:#374151;margin-right:4px;">Pilihan lainnya</span>
+                        <div style="display:flex;gap:0;border-bottom:1.5px solid #f0f0f0;">
                             <template x-for="cat in ['Semua','Tersedia','Populer','Hemat']" :key="cat">
                                 <button @click="activeFilter=cat"
-                                        style="padding:3px 11px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid;transition:all 0.15s;font-family:'Montserrat',sans-serif;letter-spacing:0.1px;"
-                                        :style="activeFilter===cat ? 'background:#111827;color:#fff;border-color:#111827;' : 'background:transparent;color:#9ca3af;border-color:transparent;'"
+                                        style="padding:5px 14px;font-size:11px;font-weight:500;cursor:pointer;border:none;border-bottom:2px solid transparent;background:transparent;transition:all 0.15s;font-family:'Montserrat',sans-serif;letter-spacing:0.2px;margin-bottom:-1.5px;"
+                                        :style="activeFilter===cat ? 'color:#075749;border-bottom-color:#075749;font-weight:700;' : 'color:#aab0b8;'"
                                         x-text="cat"></button>
                             </template>
                         </div>
-                        <span style="font-size:11px;font-weight:300;color:#9ca3af;margin-left:auto;" x-text="filteredResults.length + ' domain'"></span>
+                        <span style="font-size:11px;font-weight:300;color:#c0c0c0;margin-left:auto;" x-text="filteredResults.length + ' domain'"></span>
                     </div>
                 </div>
 
