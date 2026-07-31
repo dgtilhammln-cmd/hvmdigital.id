@@ -103,47 +103,44 @@ class TenantUpgradeController extends Controller
     /**
      * Check domain availability using WhoisJSON.com API.
      * Returns true if domain is available, false if taken.
+     *
+     * API docs: https://whoisjson.com/
+     * Curl example: GET https://whoisjson.com/api/v1/whois/?domain=example.com
+     *               Header: Authorization: TOKEN=your_api_key
      */
     private function checkViaWhoisJson(string $domain, ?string $apiKey): bool
     {
         try {
             $headers = ['Accept' => 'application/json'];
             if (!empty($apiKey)) {
-                $headers['Authorization'] = 'Token ' . $apiKey;
+                // WhoisJSON uses: Authorization: TOKEN=your_key
+                $headers['Authorization'] = 'TOKEN=' . $apiKey;
             }
 
             $response = Http::withHeaders($headers)
-                ->timeout(8)
-                ->get('https://whoisjson.com/api/v1/whois', [
+                ->timeout(10)
+                ->get('https://whoisjson.com/api/v1/whois/', [
                     'domain' => $domain,
                 ]);
 
             if (!$response->successful()) {
-                // On error, fallback to DNS check
                 return $this->fallbackDnsCheck($domain);
             }
 
             $data = $response->json();
 
-            // WhoisJSON returns `status` array or `registered` boolean
-            // If domain has a registrar or creation date it's taken
-            if (!empty($data['domain']) && !empty($data['registrar'])) {
-                return false; // taken
+            // Domain is TAKEN if registrar.name is not null
+            // Domain is AVAILABLE if registrar exists but all fields are null
+            $registrarName = $data['registrar']['name'] ?? null;
+            $createdDate   = $data['created_date'] ?? $data['creation_date'] ?? null;
+
+            if (!empty($registrarName) || !empty($createdDate)) {
+                return false; // Domain is taken
             }
 
-            if (isset($data['registered'])) {
-                return !$data['registered'];
-            }
-
-            // If WhoisJSON can't find WHOIS data, domain is likely available
-            if (isset($data['error']) || empty($data['domain'])) {
-                return true; // assume available
-            }
-
-            return false;
+            return true; // Domain is available
 
         } catch (\Throwable $e) {
-            // Fallback on exception
             return $this->fallbackDnsCheck($domain);
         }
     }
