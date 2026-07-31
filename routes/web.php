@@ -294,15 +294,12 @@ Route::post('/login', [\App\Http\Controllers\UserAuthController::class, 'login']
 Route::post('/logout', [\App\Http\Controllers\UserAuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // ========================================
-// ONBOARDING & TENANT DASHBOARD (Protected)
+// ONBOARDING (Protected)
 // ========================================
 Route::middleware('auth')->group(function () {
     Route::get('/onboarding', [\App\Http\Controllers\OnboardingController::class, 'index'])->name('onboarding');
     Route::post('/onboarding/profile', [\App\Http\Controllers\OnboardingController::class, 'saveProfile'])->name('onboarding.profile');
     Route::post('/onboarding/domain', [\App\Http\Controllers\OnboardingController::class, 'saveDomain'])->name('onboarding.domain');
-    Route::get('/dashboard', function () {
-        return 'Tenant Dashboard — Coming Soon';
-    })->name('tenant.dashboard');
 });
 
 // ========================================
