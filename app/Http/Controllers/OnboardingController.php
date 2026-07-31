@@ -59,23 +59,24 @@ class OnboardingController extends Controller
             'npwp'              => 'nullable|string|max:50',
             'instagram'         => 'nullable|string|max:255',
             'facebook'          => 'nullable|string|max:255',
-            'tiktok'            => 'nullable|string|max:255',
+            'legal_document'    => 'nullable|image|max:5120', // Max 5MB
+            'store_photo'       => 'nullable|image|max:5120',
         ]);
 
         $tenant = Auth::user()->tenant;
 
-        // Generate SEO-friendly slug from business name
-        $slug = Str::slug($validated['business_name']);
-        if (Tenant::where('slug', $slug)->where('id', '!=', $tenant->id)->exists()) {
-            $slug .= '-' . Str::random(4);
+        $imageService = app(\App\Services\ImageService::class);
+        
+        // Handle Legal Document (NIB/KTP)
+        if ($request->hasFile('legal_document')) {
+            $result = $imageService->uploadAndConvert($request->file('legal_document'), 'tenants/legal', 800, 85);
+            $validated['legal_document'] = $result['path'];
         }
-        $validated['slug'] = $slug;
 
-        // Handle logo upload
-        if ($request->hasFile('logo')) {
-            $imageService = app(\App\Services\ImageService::class);
-            $result = $imageService->uploadAndConvert($request->file('logo'), 'tenants/logos', 400, 85);
-            $validated['logo'] = $result['path'];
+        // Handle Store Photo (Foto Toko/Usaha)
+        if ($request->hasFile('store_photo')) {
+            $result = $imageService->uploadAndConvert($request->file('store_photo'), 'tenants/store', 800, 85);
+            $validated['store_photo'] = $result['path'];
         }
 
         $validated['onboarding_step'] = 2;
@@ -92,12 +93,19 @@ class OnboardingController extends Controller
         $validated = $request->validate([
             'domain_type' => 'required|in:free,custom',
             'domain_name' => 'nullable|required_if:domain_type,custom|string|max:255',
+            'slug'        => 'nullable|required_if:domain_type,free|string|max:100',
         ]);
 
         $tenant = Auth::user()->tenant;
 
         if ($validated['domain_type'] === 'free') {
+            $slug = Str::slug($validated['slug']);
+            if (Tenant::where('slug', $slug)->where('id', '!=', $tenant->id)->exists()) {
+                $slug .= '-' . Str::random(4);
+            }
+            
             $tenant->update([
+                'slug'            => $slug,
                 'plan'            => 'free',
                 'onboarding_step' => 3,
                 'status'          => 'active', // Free users go live immediately
