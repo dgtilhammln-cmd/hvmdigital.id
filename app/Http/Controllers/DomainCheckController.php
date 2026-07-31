@@ -8,92 +8,108 @@ use Illuminate\Http\Request;
 class DomainCheckController extends Controller
 {
     /**
-     * Cek ketersediaan domain menggunakan DNS lookup (gratis, tanpa API pihak ketiga).
-     * Logikanya: Jika domain sudah terdaftar, DNS server pasti punya record-nya.
-     * Jika tidak ada record sama sekali, kemungkinan besar domain tersedia.
-     *
-     * ⚠ Catatan: Metode ini ~95% akurat. Domain yang baru expired mungkin masih punya DNS record.
+     * Domain Base Prices (before markup)
+     */
+    private $basePrices = [
+        'com'   => 150000,
+        'id'    => 250000,
+        'net'   => 175000,
+        'org'   => 180000,
+        'co.id' => 300000,
+        'my.id' => 15000,
+        'biz.id'=> 20000,
+        'sch.id'=> 60000,
+    ];
+
+    /**
+     * Cek ketersediaan domain dan hitung harga (API + Markup)
      */
     public function check(Request $request): JsonResponse
     {
         $request->validate([
-            'domain' => 'required|string|max:255',
+            'domain' => 'required|string|min:2', // Frontend sends 'domain' in onboarding
         ]);
 
-        $input  = strtolower(trim($request->input('domain')));
-        $input  = preg_replace('/[^a-z0-9\-\.]/', '', $input);
+        $raw   = \Illuminate\Support\Str::lower(trim($request->input('domain')));
+        $raw   = preg_replace('#^https?://(www\.)?#', '', $raw);
+        $raw   = preg_replace('/[^a-z0-9\-\.]/', '', $raw);
 
-        // Jika user hanya mengetik nama tanpa TLD, cek beberapa TLD populer
-        if (!str_contains($input, '.')) {
-            $tlds = ['.com', '.id', '.co.id', '.net', '.org', '.store', '.online', '.site', '.xyz', '.io'];
-            $results = [];
+        $parts    = explode('.', $raw, 2);
+        $name     = $parts[0];
+        $inputTld = isset($parts[1]) && $parts[1] !== '' ? $parts[1] : null;
 
-            foreach ($tlds as $tld) {
-                $fullDomain = $input . $tld;
-                $results[] = [
-                    'domain'    => $fullDomain,
-                    'tld'       => $tld,
-                    'available' => $this->isDomainAvailable($fullDomain),
-                ];
+        $tldsToCheck = $inputTld ? [$inputTld] : ['com', 'id', 'net', 'my.id', 'co.id'];
+        $apiKey = \App\Models\Setting::where('key', 'whoisjson_api_key')->value('value');
+
+        $results = [];
+
+        foreach ($tldsToCheck as $tld) {
+            if (!isset($this->basePrices[$tld])) {
+                continue;
             }
 
-            return response()->json([
-                'success' => true,
-                'query'   => $input,
-                'results' => $results,
-            ]);
-        }
+            $domain    = $name . '.' . $tld;
+            $isAvailable = $this->checkViaWhoisJson($domain, $apiKey);
 
-        // Jika user mengetik domain lengkap (contoh: tokobaju.com)
-        $available = $this->isDomainAvailable($input);
-        $tld = '.' . implode('.', array_slice(explode('.', $input), 1));
+            $basePrice  = $this->basePrices[$tld];
+            $markup     = $basePrice * 2;
+            $adminFee   = 10000;
+            $subTotal   = $markup + $adminFee;
+            $tax        = round($subTotal * 0.11);
+            $total      = $subTotal + $tax;
+
+            $results[] = [
+                'domain'    => $domain,
+                'available' => $isAvailable,
+                'tld'       => $tld,
+                'price'     => [
+                    'base'            => $basePrice,
+                    'markup'          => $markup,
+                    'admin_fee'       => $adminFee,
+                    'tax'             => $tax,
+                    'total'           => $total,
+                    'total_formatted' => 'Rp ' . number_format($total, 0, ',', '.'),
+                ],
+            ];
+        }
 
         return response()->json([
             'success' => true,
-            'query'   => $input,
-            'results' => [
-                [
-                    'domain'    => $input,
-                    'tld'       => $tld,
-                    'available' => $available,
-                ],
-            ],
+            'query'   => $raw,
+            'results' => $results,
         ]);
     }
 
-    /**
-     * Cek apakah domain tersedia menggunakan multi-method DNS check.
-     * Kombinasi checkdnsrr() + gethostbyname() untuk akurasi tinggi.
-     */
-    private function isDomainAvailable(string $domain): bool
+    private function checkViaWhoisJson(string $domain, ?string $apiKey): bool
     {
-        // Method 1: Cek record A (IPv4)
-        if (checkdnsrr($domain, 'A')) {
-            return false;
-        }
+        try {
+            $headers = ['Accept' => 'application/json'];
+            if (!empty($apiKey)) {
+                $headers['Authorization'] = 'TOKEN=' . $apiKey;
+            }
 
-        // Method 2: Cek record AAAA (IPv6)
-        if (checkdnsrr($domain, 'AAAA')) {
-            return false;
-        }
+            $response = \Illuminate\Support\Facades\Http::withHeaders($headers)
+                ->timeout(10)
+                ->get('https://whoisjson.com/api/v1/whois/', [
+                    'domain' => $domain,
+                ]);
 
-        // Method 3: Cek record NS (Nameserver) — lebih reliable untuk domain terdaftar tapi belum punya hosting
-        if (checkdnsrr($domain, 'NS')) {
-            return false;
-        }
+            if (!$response->successful()) return $this->fallbackDnsCheck($domain);
 
-        // Method 4: Cek record MX (Email) — domain dengan email pasti sudah terdaftar
-        if (checkdnsrr($domain, 'MX')) {
-            return false;
-        }
+            $data = $response->json();
+            $registrarName = $data['registrar']['name'] ?? null;
+            $createdDate   = $data['created_date'] ?? $data['creation_date'] ?? null;
 
-        // Method 5: Double-check dengan gethostbyname — returns IP jika domain terdaftar
-        $ip = @gethostbyname($domain);
-        if ($ip !== $domain) {
-            return false; // resolved ke IP = domain sudah terdaftar
-        }
+            if (!empty($registrarName) || !empty($createdDate)) return false;
 
-        // Semua pengecekan tidak menemukan record → domain kemungkinan besar tersedia
-        return true;
+            return true;
+        } catch (\Throwable $e) {
+            return $this->fallbackDnsCheck($domain);
+        }
+    }
+
+    private function fallbackDnsCheck(string $domain): bool
+    {
+        return !checkdnsrr($domain, 'ANY');
     }
 }

@@ -1,5 +1,13 @@
 @extends('layouts.auth')
 
+@push('head')
+    @php
+        $isProduction = setting('midtrans_is_production') === '1';
+        $snapUrl = $isProduction ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js';
+    @endphp
+    <script src="{{ $snapUrl }}" data-client-key="{{ setting('midtrans_client_key') }}"></script>
+@endpush
+
 @section('content')
     <section class="min-h-screen py-16 px-4 relative flex items-center" x-data="onboardingWizard()">
         <div class="w-full max-w-4xl mx-auto relative z-10">
@@ -334,7 +342,7 @@
                                                 <span class="font-medium text-sm text-fg" x-text="result.domain"></span>
                                                 <p class="text-[10px] font-bold"
                                                     :class="result.available ? 'text-[#9acb03]' : 'text-red-500'"
-                                                    x-text="result.available ? 'Tersedia' : 'Tidak Tersedia'"></p>
+                                                    x-text="result.available ? (result.price ? result.price.total_formatted + '/thn' : 'Tersedia') : 'Tidak Tersedia'"></p>
                                             </div>
                                             <div x-show="result.available && form.domain_name === result.domain"
                                                 class="w-5 h-5 rounded-full bg-[#9acb03] text-white flex items-center justify-center shrink-0">
@@ -616,8 +624,28 @@
                             });
                             const data = await res.json();
                             if (data.success) {
-                                this.step = 3;
-                                setTimeout(() => { window.location.href = '{{ route("tenant.dashboard") }}'; }, 1500);
+                                if (data.snap_token) {
+                                    // Trigger Midtrans Snap
+                                    window.snap.pay(data.snap_token, {
+                                        onSuccess: function(result){
+                                            this.step = 3;
+                                            setTimeout(() => { window.location.href = '{{ route("tenant.dashboard") }}'; }, 1500);
+                                        }.bind(this),
+                                        onPending: function(result){
+                                            // Tetap lanjut ke dashboard, karena tagihan akan muncul di sana
+                                            this.step = 3;
+                                            setTimeout(() => { window.location.href = '{{ route("tenant.dashboard") }}'; }, 1500);
+                                        }.bind(this),
+                                        onClose: function(){
+                                            // Tetap lanjut ke dashboard
+                                            this.step = 3;
+                                            setTimeout(() => { window.location.href = '{{ route("tenant.dashboard") }}'; }, 1500);
+                                        }.bind(this)
+                                    });
+                                } else {
+                                    this.step = 3;
+                                    setTimeout(() => { window.location.href = '{{ route("tenant.dashboard") }}'; }, 1500);
+                                }
                             }
                         } catch (e) {
                             this.showAlert('Koneksi gagal, coba lagi.', 'error');

@@ -95,32 +95,90 @@ class OnboardingController extends Controller
         $validated = $request->validate([
             'domain_type' => 'required|in:free,custom',
             'domain_name' => 'nullable|required_if:domain_type,custom|string|max:255',
-            'slug'        => 'nullable|required_if:domain_type,free|string|max:100',
+            'slug'        => 'nullable|string|max:100', // Now it's always submitted (fallback)
         ]);
 
         $tenant = Auth::user()->tenant;
 
+        // 1. ALWAYS assign a slug (Free subdomain fallback)
+        $slug = \Illuminate\Support\Str::slug($validated['slug'] ?? $tenant->business_name);
+        if (\App\Models\Tenant::where('slug', $slug)->where('id', '!=', $tenant->id)->exists()) {
+            $slug .= '-' . \Illuminate\Support\Str::random(4);
+        }
+
         if ($validated['domain_type'] === 'free') {
-            $slug = Str::slug($validated['slug']);
-            if (Tenant::where('slug', $slug)->where('id', '!=', $tenant->id)->exists()) {
-                $slug .= '-' . Str::random(4);
-            }
-            
             $tenant->update([
                 'slug'            => $slug,
                 'plan'            => 'free',
                 'onboarding_step' => 3,
                 'status'          => 'active',
             ]);
-        } else {
-            $tenant->update([
-                'domain_name'     => $validated['domain_name'],
-                'plan'            => 'pro',
-                'onboarding_step' => 3,
-                'status'          => 'active',
-            ]);
+            return response()->json(['success' => true, 'step' => 3]);
         }
 
-        return response()->json(['success' => true, 'step' => 3]);
+        // 2. Custom Domain Logic
+        $domainName = $validated['domain_name'];
+        $tld = '.' . implode('.', array_slice(explode('.', $domainName), 1));
+        
+        $basePrices = [
+            '.com'   => 150000, '.id'    => 250000, '.net'   => 175000,
+            '.org'   => 180000, '.co.id' => 300000, '.my.id' => 15000,
+            '.biz.id'=> 20000,  '.sch.id'=> 60000,
+        ];
+        
+        $basePrice = $basePrices[$tld] ?? 150000;
+        $markup = $basePrice * 2;
+        $adminFee = 10000;
+        $subTotal = $markup + $adminFee;
+        $tax = round($subTotal * 0.11);
+        $totalPrice = $subTotal + $tax;
+
+        // Update Tenant: Activating with fallback free subdomain but marked as 'pro' intention
+        $tenant->update([
+            'slug'            => $slug,
+            'domain_name'     => $domainName,
+            'plan'            => 'pro',
+            'onboarding_step' => 3,
+            'status'          => 'active',
+        ]);
+
+        // Create Order
+        $order = \App\Models\TenantOrder::create([
+            'tenant_id'      => $tenant->id,
+            'invoice_number' => 'INV-' . time() . '-' . strtoupper(\Illuminate\Support\Str::random(4)),
+            'total_amount'   => $totalPrice,
+            'domain_name'    => $domainName,
+            'domain_price'   => $totalPrice,
+            'payment_status' => 'pending',
+        ]);
+
+        // Generate Snap Token
+        try {
+            $midtrans = new \App\Services\MidtransService();
+            $snapToken = $midtrans->getSnapToken(
+                [
+                    'order_id'     => $order->invoice_number,
+                    'gross_amount' => $totalPrice,
+                ],
+                [
+                    'first_name' => $tenant->business_name,
+                    'email'      => Auth::user()->email,
+                    'phone'      => $tenant->whatsapp,
+                ]
+            );
+
+            $order->update(['snap_token' => $snapToken]);
+
+            return response()->json([
+                'success'    => true, 
+                'step'       => 3,
+                'snap_token' => $snapToken
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Gagal menghubungkan ke payment gateway: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

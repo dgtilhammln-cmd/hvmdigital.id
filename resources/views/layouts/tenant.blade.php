@@ -19,6 +19,13 @@
     <link rel="icon" href="{{ $faviconUrl }}" type="{{ $faviconType }}">
     <link rel="shortcut icon" href="{{ $faviconUrl }}" type="{{ $faviconType }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    @php
+        $isProduction = setting('midtrans_is_production') === '1';
+        $snapUrl = $isProduction ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js';
+    @endphp
+    <script src="{{ $snapUrl }}" data-client-key="{{ setting('midtrans_client_key') }}"></script>
+    
     @stack('head')
     <style>
         [x-cloak] { display: none !important; }
@@ -228,6 +235,46 @@
 
         {{-- Content --}}
         <main style="flex:1;padding:24px 28px;">
+            @php
+                $pendingOrder = null;
+                if (Auth::check() && Auth::user()->tenant) {
+                    $pendingOrder = \App\Models\TenantOrder::where('tenant_id', Auth::user()->tenant->id)
+                        ->where('payment_status', 'pending')
+                        ->latest()
+                        ->first();
+                }
+            @endphp
+            
+            @if($pendingOrder)
+            <div style="background:linear-gradient(135deg, #fff7ed, #ffedd5); border:1px solid #fed7aa; border-radius:12px; padding:16px 20px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:16px; box-shadow:0 4px 15px rgba(249,115,22,0.05);">
+                <div style="display:flex; align-items:flex-start; gap:12px;">
+                    <div style="background:#f97316; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <svg width="20" height="20" fill="none" stroke="#fff" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    <div>
+                        <h3 style="margin:0 0 4px 0; font-size:14px; font-weight:700; color:#9a3412;">Satu langkah lagi untuk domain profesional Anda!</h3>
+                        <p style="margin:0; font-size:12px; color:#c2410c; line-height:1.4;">
+                            Selesaikan pembayaran pesanan <strong>{{ $pendingOrder->invoice_number }}</strong> untuk domain <strong>{{ $pendingOrder->domain_name }}</strong> sebesar <strong>Rp {{ number_format($pendingOrder->total_amount, 0, ',', '.') }}</strong> agar website langsung online dengan ekstensi tersebut.
+                        </p>
+                    </div>
+                </div>
+                <button id="pay-pending-order" data-snap="{{ $pendingOrder->snap_token }}" style="background:#ea580c; color:#fff; border:none; padding:10px 20px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; box-shadow:0 2px 4px rgba(234,88,12,0.2); transition:all 0.2s;">
+                    Bayar Sekarang
+                </button>
+            </div>
+            
+            <script>
+                document.getElementById('pay-pending-order').addEventListener('click', function() {
+                    var token = this.getAttribute('data-snap');
+                    if (token) {
+                        window.snap.pay(token, {
+                            onSuccess: function(result){ window.location.reload(); },
+                            onPending: function(result){ window.location.reload(); }
+                        });
+                    }
+                });
+            </script>
+            @endif
             @yield('content')
         </main>
     </div>
