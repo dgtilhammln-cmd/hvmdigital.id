@@ -94,35 +94,35 @@
 
             {{-- Primary Result --}}
             <template x-if="primaryResult">
-                <div style="border-radius:20px;padding:22px 26px;margin-bottom:14px;border:1.5px solid;"
-                     :style="primaryResult.available ? 'border-color:#e8f5d0;background:linear-gradient(140deg,rgba(154,203,3,0.03) 0%,#fff 70%);' : 'border-color:#f5f5f5;background:#fafafa;'">
+                <div style="border-radius:24px;padding:24px 28px;margin-bottom:16px;border:1.5px solid;"
+                     :style="primaryResult.available ? 'border-color:#e8f5d0;background:linear-gradient(140deg,rgba(154,203,3,0.03) 0%,#fff 70%);' : 'border-color:#f0f0f0;background:#fafafa;'">
                     
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-                        <span style="font-size:11px;font-weight:500;letter-spacing:0.02em;"
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+                        <span style="font-size:11px;font-weight:500;"
                               :style="primaryResult.available ? 'color:#6ab04c;' : 'color:#ccc;'"
                               x-text="primaryResult.available ? '✓ Sesuai permintaan' : '· tidak tersedia'"></span>
                         <span x-show="!primaryResult.available" style="font-size:11px;font-weight:300;color:#e0e0e0;">— cek alternatif di bawah</span>
                     </div>
 
-                    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-                        <div>
-                            <div style="font-size:18px;font-weight:700;color:#111827;letter-spacing:-0.3px;" x-text="primaryResult.domain"></div>
-                            <div x-show="primaryResult.available" style="margin-top:6px;display:flex;flex-direction:column;gap:3px;">
-                                <span style="font-size:12px;font-weight:300;color:#6b7280;display:flex;align-items:center;gap:5px;"><svg style="width:13px;height:13px;color:#9acb03;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Domain profesional untuk bisnis Anda</span>
-                                <span style="font-size:12px;font-weight:300;color:#6b7280;display:flex;align-items:center;gap:5px;"><svg style="width:13px;height:13px;color:#9acb03;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Tingkatkan kepercayaan pelanggan Anda</span>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+                        <div style="flex:1;min-width:160px;">
+                            <div style="font-size:18px;font-weight:700;color:#111827;letter-spacing:-0.3px;margin-bottom:8px;" x-text="primaryResult.domain"></div>
+                            <div x-show="primaryResult.available" style="display:flex;flex-direction:column;gap:4px;">
+                                <span style="font-size:12px;font-weight:300;color:#9ca3af;display:flex;align-items:center;gap:6px;"><svg style="width:12px;height:12px;color:#9acb03;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Domain profesional untuk bisnis Anda</span>
+                                <span style="font-size:12px;font-weight:300;color:#9ca3af;display:flex;align-items:center;gap:6px;"><svg style="width:12px;height:12px;color:#9acb03;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Tingkatkan kepercayaan pelanggan</span>
                             </div>
                         </div>
 
-                        <div x-show="primaryResult.available" style="display:flex;align-items:center;gap:18px;flex-shrink:0;">
+                        <div x-show="primaryResult.available" style="flex-shrink:0;background:#fff;border:1px solid #f0f0f0;border-radius:18px;padding:16px 20px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;box-shadow:0 2px 12px rgba(0,0,0,0.04);">
                             <div style="text-align:right;">
                                 <div style="font-size:11px;font-weight:300;color:#d1d5db;text-decoration:line-through;" x-text="'Rp ' + Math.round(primaryResult.price.base * 2.5).toLocaleString('id-ID') + ' /Tahun'"></div>
-                                <div style="font-size:20px;font-weight:700;color:#075749;" x-text="primaryResult.price.total_formatted"></div>
-                                <div style="font-size:10px;font-weight:300;color:#9ca3af;">incl. PPN 11%</div>
+                                <div style="font-size:20px;font-weight:700;color:#075749;letter-spacing:-0.3px;" x-text="primaryResult.price.total_formatted"></div>
+                                <div style="font-size:10px;font-weight:300;color:#c0c0c0;">incl. PPN 11%</div>
                             </div>
                             <button @click="selectAndProceed(primaryResult)"
-                                    style="padding:12px 22px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,#075749,#9acb03);color:#fff;font-family:'Montserrat',sans-serif;white-space:nowrap;transition:all 0.2s;letter-spacing:0.2px;box-shadow:0 4px 14px rgba(7,87,73,0.25);"
-                                    @mouseover="$el.style.transform='scale(1.04)';$el.style.boxShadow='0 6px 20px rgba(7,87,73,0.35)'"
-                                    @mouseout="$el.style.transform='scale(1)';$el.style.boxShadow='0 4px 14px rgba(7,87,73,0.25)'">
+                                    style="padding:11px 22px;border-radius:14px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,#075749,#9acb03);color:#fff;font-family:'Montserrat',sans-serif;white-space:nowrap;transition:all 0.2s;letter-spacing:0.2px;box-shadow:0 4px 14px rgba(7,87,73,0.2);width:100%;"
+                                    @mouseover="$el.style.transform='scale(1.03)';$el.style.boxShadow='0 6px 20px rgba(7,87,73,0.3)'"
+                                    @mouseout="$el.style.transform='scale(1)';$el.style.boxShadow='0 4px 14px rgba(7,87,73,0.2)'">
                                 Pilih Domain
                             </button>
                         </div>
@@ -131,25 +131,15 @@
             </template>
 
             {{-- Other TLDs - COMPACT LIST --}}
-            <div x-show="otherResults.length > 0" style="background:#fff;border-radius:14px;border:1.5px solid #e5e7eb;overflow:hidden;">
-                {{-- Header + Filter --}}
-                <div style="padding:14px 20px;border-bottom:1px solid #f5f5f5;">
-                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-                        <span style="font-size:12px;font-weight:600;color:#374151;margin-right:4px;">Pilihan lainnya</span>
-                        <div style="display:flex;gap:0;border-bottom:1.5px solid #f0f0f0;">
-                            <template x-for="cat in ['Semua','Tersedia','Populer','Hemat']" :key="cat">
-                                <button @click="activeFilter=cat"
-                                        style="padding:5px 14px;font-size:11px;font-weight:500;cursor:pointer;border:none;border-bottom:2px solid transparent;background:transparent;transition:all 0.15s;font-family:'Montserrat',sans-serif;letter-spacing:0.2px;margin-bottom:-1.5px;"
-                                        :style="activeFilter===cat ? 'color:#075749;border-bottom-color:#075749;font-weight:700;' : 'color:#aab0b8;'"
-                                        x-text="cat"></button>
-                            </template>
-                        </div>
-                        <span style="font-size:11px;font-weight:300;color:#c0c0c0;margin-left:auto;" x-text="filteredResults.length + ' domain'"></span>
-                    </div>
+            <div x-show="otherResults.length > 0" style="background:#fff;border-radius:20px;border:1.5px solid #f0f0f0;overflow:hidden;">
+                {{-- Header only, no filter chips --}}
+                <div style="padding:16px 22px;border-bottom:1px solid #f5f5f5;display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:12px;font-weight:600;color:#374151;">Pilihan domain lainnya</span>
+                    <span style="font-size:11px;font-weight:300;color:#c0c0c0;" x-text="otherResults.length + ' domain'"></span>
                 </div>
 
                 {{-- Compact Rows --}}
-                <template x-for="(result, idx) in filteredResults" :key="idx">
+                <template x-for="(result, idx) in otherResults" :key="idx">
                     <div style="display:flex;align-items:center;padding:10px 20px;border-bottom:1px solid #fafafa;transition:background 0.12s;gap:10px;"
                          @mouseover="$el.style.background='#fafafa'" @mouseout="$el.style.background='transparent'">
                         
