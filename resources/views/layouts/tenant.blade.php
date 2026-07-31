@@ -1,168 +1,238 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id" x-data="{ sidebarOpen: window.innerWidth >= 1024 }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Dashboard - {{ config('app.name', 'HVM Digital') }}</title>
-
+    <title>@yield('title', 'Dashboard') — HVM Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @php
         $faviconUrl = setting('favicon') ? get_image_url(setting('favicon')) : asset('favicon.ico');
+        $faviconExt = pathinfo($faviconUrl, PATHINFO_EXTENSION);
+        $faviconType = 'image/x-icon';
+        if ($faviconExt === 'png') $faviconType = 'image/png';
+        elseif ($faviconExt === 'svg') $faviconType = 'image/svg+xml';
+        elseif ($faviconExt === 'webp') $faviconType = 'image/webp';
+        elseif (in_array($faviconExt, ['jpg', 'jpeg'])) $faviconType = 'image/jpeg';
     @endphp
-    <link rel="icon" href="{{ $faviconUrl }}">
-    
-    {{-- Direct Google Fonts for guaranteed loading without JS --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script>
-        (function(){
-            var t=localStorage.getItem('hvm-theme');
-            var d=window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if(t==='dark'||(t===null&&d)){document.documentElement.classList.add('dark');}
-        })();
-    </script>
-
+    <link rel="icon" href="{{ $faviconUrl }}" type="{{ $faviconType }}">
+    <link rel="shortcut icon" href="{{ $faviconUrl }}" type="{{ $faviconType }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
-</head>
-<body class="font-montserrat antialiased bg-surface text-fg min-h-screen relative overflow-x-hidden flex" x-data="{ sidebarOpen: false, sidebarCollapsed: false }">
-    
-    {{-- Global Background Gradient (Premium Dark) --}}
-    <div class="fixed inset-0 pointer-events-none z-0">
-        <div class="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 rounded-full bg-[#9acb03]/5 dark:bg-[#9acb03]/10 blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 -ml-32 -mb-32 w-96 h-96 rounded-full bg-[#075749]/10 dark:bg-[#075749]/20 blur-3xl"></div>
-    </div>
+    <style>
+        [x-cloak] { display: none !important; }
+        * { font-family: 'Inter', sans-serif; }
 
-    {{-- Mobile Overlay --}}
-    <div x-show="sidebarOpen" style="display:none" @click="sidebarOpen = false" x-transition.opacity
-         class="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"></div>
+        /* Sidebar */
+        .admin-sidebar {
+            background: #0d1f15;
+            width: 240px;
+            min-height: 100vh;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 40;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .admin-sidebar::-webkit-scrollbar { display: none; }
 
-    {{-- Sidebar --}}
-    <aside :class="{
-                'translate-x-0': sidebarOpen,
-                '-translate-x-full': !sidebarOpen,
-                'w-72': !sidebarCollapsed,
-                'w-20': sidebarCollapsed
-           }"
-           class="fixed lg:static inset-y-0 left-0 bg-white/5 dark:bg-black/20 backdrop-blur-xl border-r border-white/5 z-50 flex flex-col transition-all duration-300 lg:translate-x-0 shadow-2xl lg:shadow-none group">
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.45);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-bottom: 2px;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.85);
+        }
+        .nav-item.active {
+            background: rgba(154,203,3,0.12);
+            color: #9acb03;
+            font-weight: 500;
+        }
+        .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+        /* Main area */
+        .admin-main {
+            margin-left: 240px;
+            min-height: 100vh;
+            background: #f1f5f2;
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 240px);
+        }
+
+        /* Topbar */
+        .admin-topbar {
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0 28px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+
+        /* Cards */
+        .stat-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px 22px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid #eef0ee;
+            transition: box-shadow 0.2s;
+        }
+        .stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+        .panel {
+            background: #fff;
+            border-radius: 16px;
+            padding: 22px 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid #eef0ee;
+        }
         
-        {{-- Sidebar Header (Logo) --}}
-        <div class="h-20 flex items-center px-6 border-b border-white/5 shrink-0" :class="sidebarCollapsed ? 'justify-center' : 'justify-between'">
-            <a href="{{ route('tenant.dashboard') }}" class="inline-block transition-transform hover:scale-105 overflow-hidden">
-                @php
-                    $logoUrl = setting('logo_white') ? get_image_url(setting('logo_white')) : asset('images/logohvm.png');
-                @endphp
-                <img src="{{ $logoUrl }}" alt="HVM Digital" class="h-8 w-auto max-w-none" :class="sidebarCollapsed ? 'hidden' : 'block'">
-                <div :class="sidebarCollapsed ? 'block' : 'hidden'" class="w-8 h-8 bg-[#9acb03] rounded-lg flex items-center justify-center font-bold text-black">H</div>
-            </a>
-            <button @click="sidebarOpen = false" class="lg:hidden text-muted hover:text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-        </div>
+        .dark-panel {
+            background: #0d1f15;
+            border-radius: 16px;
+            padding: 22px 24px;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
 
-        {{-- Sidebar Navigation --}}
-        <div class="flex-1 overflow-y-auto py-6 px-4 custom-scrollbar space-y-2">
-            <a href="{{ route('tenant.dashboard') }}" 
-               class="flex items-center gap-3 py-3 rounded-xl transition-all"
-               :class="sidebarCollapsed ? 'justify-center px-0' : 'px-4', '{{ request()->routeIs('tenant.dashboard') ? 'bg-[#9acb03]/10 text-[#9acb03] border border-[#9acb03]/20 shadow-[0_0_15px_rgba(154,203,3,0.1)]' : 'text-muted hover:bg-white/5 hover:text-white' }}'"
-               title="Dashboard">
-                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                <span class="font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300" :class="sidebarCollapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 block'">Dashboard</span>
-            </a>
-            
-            {{-- Feature: Upgrade Website --}}
-            <a href="{{ route('tenant.upgrade') }}" 
-               class="flex items-center gap-3 py-3 rounded-xl transition-all relative group"
-               :class="sidebarCollapsed ? 'justify-center px-0' : 'px-4', '{{ request()->routeIs('tenant.upgrade*') ? 'bg-[#9acb03]/10 text-[#9acb03] border border-[#9acb03]/20 shadow-[0_0_15px_rgba(154,203,3,0.1)]' : 'text-muted hover:bg-white/5 hover:text-white' }}'"
-               title="Upgrade Website">
-                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
-                <span class="font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300" :class="sidebarCollapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 block'">Upgrade Website</span>
-                @if(Auth::user()->tenant && Auth::user()->tenant->plan !== 'pro')
-                <span class="flex h-2 w-2 absolute right-3 top-4" :class="sidebarCollapsed ? 'right-2 top-2' : 'right-3 top-4'">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                </span>
-                @endif
-            </a>
+        /* Buttons */
+        .btn-primary {
+            background: #075749;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { background: #0a6d58; }
+        .btn-secondary { background:#f3f4f6; color:#374151; padding:8px 16px; border-radius:10px; font-size:13px; font-weight:500; border:1px solid #e5e7eb; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; }
+        .btn-secondary:hover { background:#e5e7eb; }
+        .btn-accent { background: #9acb03; color: #0d1f15; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; text-align: center; display: inline-block; transition: all 0.2s; border: none; cursor: pointer; }
+        .btn-accent:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(154,203,3,0.3); }
 
-            <div class="pt-6 pb-2 border-t border-white/5 mt-4" :class="sidebarCollapsed ? 'px-0 text-center' : 'px-4'">
-                <p class="text-[10px] font-semibold text-muted uppercase tracking-wider" :class="sidebarCollapsed ? 'hidden' : 'block'">Manajemen Website</p>
-                <div :class="sidebarCollapsed ? 'block' : 'hidden'" class="w-full h-px bg-white/10"></div>
+        @media(max-width:1023px){
+            .admin-sidebar { transform: translateX(-100%); }
+            .admin-sidebar.open { transform: translateX(0); }
+            .admin-main { margin-left: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body style="background:#f1f5f2; margin:0;">
+
+<div style="display:flex; min-height:100vh;">
+
+    {{-- SIDEBAR --}}
+    <aside class="admin-sidebar" :class="sidebarOpen ? 'open' : ''">
+        {{-- Brand --}}
+        <div style="padding:20px 18px; border-bottom:1px solid rgba(255,255,255,0.06);">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img src="{{ $faviconUrl }}" alt="Logo HVM" style="width:36px;height:36px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,255,255,0.08);">
+                <div>
+                    <div style="color:#fff;font-weight:700;font-size:14px;line-height:1.2;">HVM Digital</div>
+                    <div style="color:rgba(255,255,255,0.3);font-size:11px;">Tenant Dashboard</div>
+                </div>
             </div>
-            
-            <a href="#" class="flex items-center gap-3 py-3 rounded-xl transition-all text-muted hover:bg-white/5 hover:text-white cursor-not-allowed opacity-50 relative"
-               :class="sidebarCollapsed ? 'justify-center px-0' : 'px-4'" title="Konten & Artikel">
-                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-                <span class="font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300" :class="sidebarCollapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 block'">Konten & Artikel</span>
-                <span :class="sidebarCollapsed ? 'hidden' : 'block'" class="ml-auto text-[9px] bg-white/10 px-2 py-0.5 rounded-full">Segera</span>
-            </a>
-            <a href="#" class="flex items-center gap-3 py-3 rounded-xl transition-all text-muted hover:bg-white/5 hover:text-white cursor-not-allowed opacity-50 relative"
-               :class="sidebarCollapsed ? 'justify-center px-0' : 'px-4'" title="Produk & Katalog">
-                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                <span class="font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300" :class="sidebarCollapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 block'">Produk & Katalog</span>
-                <span :class="sidebarCollapsed ? 'hidden' : 'block'" class="ml-auto text-[9px] bg-white/10 px-2 py-0.5 rounded-full">Segera</span>
-            </a>
         </div>
 
-        {{-- Sidebar Footer --}}
-        <div class="p-4 border-t border-white/5">
+        {{-- Nav --}}
+        <nav style="padding:14px; flex:1;">
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.2);padding:0 6px 6px;">Navigasi</div>
+            
+            <a href="{{ route('tenant.dashboard') }}" class="nav-item {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                Dashboard
+            </a>
+            
+            <a href="{{ route('tenant.upgrade') }}" class="nav-item {{ request()->routeIs('tenant.upgrade*') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                Upgrade Website
+            </a>
+        </nav>
+
+        {{-- User area --}}
+        <div style="padding:14px;border-top:1px solid rgba(255,255,255,0.06);">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                <div style="width:32px;height:32px;background:linear-gradient(135deg,#9acb03,#075749);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;flex-shrink:0;">{{ strtoupper(substr(Auth::user()->name,0,1)) }}</div>
+                <div style="overflow:hidden;">
+                    <div style="color:#fff;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ Auth::user()->name }}</div>
+                    <div style="color:rgba(255,255,255,0.3);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{!! Auth::user()->tenant->business_name ?? 'UMKM' !!}</div>
+                </div>
+            </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="w-full flex items-center gap-2 py-2.5 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors text-sm font-medium"
-                        :class="sidebarCollapsed ? 'justify-center px-0' : 'justify-center px-4'" title="Keluar">
-                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                    <span :class="sidebarCollapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100 block'" class="whitespace-nowrap transition-all duration-300">Keluar</span>
+                <button type="submit" style="width:100%;text-align:left;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);color:rgba(239,68,68,0.7);font-size:12px;padding:7px 12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s;">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    Keluar
                 </button>
             </form>
         </div>
     </aside>
 
-    {{-- Main Content --}}
-    <main class="flex-1 flex flex-col min-w-0 relative z-10 h-screen overflow-y-auto custom-scrollbar">
-        
-        {{-- Topbar --}}
-        <header class="h-20 flex items-center justify-between px-6 lg:px-10 sticky top-0 bg-surface/80 dark:bg-[#061009]/80 backdrop-blur-xl border-b border-white/5 z-40">
-            <div class="flex items-center gap-4">
-                {{-- Toggle Sidebar Desktop --}}
-                <button @click="sidebarCollapsed = !sidebarCollapsed" class="hidden lg:flex p-2 -ml-2 rounded-lg text-muted hover:bg-white/5 hover:text-fg transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                </button>
-                {{-- Toggle Sidebar Mobile --}}
-                <button @click="sidebarOpen = true" class="lg:hidden p-2 -ml-2 rounded-lg text-muted hover:bg-white/5 hover:text-fg transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                </button>
-                <h1 class="text-xl font-bold text-fg hidden sm:block">@yield('page-title', 'Dashboard')</h1>
-            </div>
+    {{-- Overlay --}}
+    <div x-show="sidebarOpen" style="display:none" @click="sidebarOpen = false" x-transition.opacity
+         class="fixed inset-0 bg-black/50 z-30 lg:hidden"></div>
 
-            <div class="flex items-center gap-4">
-                {{-- User Dropdown (Simple for now) --}}
-                <div class="flex items-center gap-3 bg-white/5 border border-white/5 rounded-full pl-2 pr-4 py-1.5 cursor-pointer hover:bg-white/10 transition-colors">
-                    <div class="w-8 h-8 rounded-full bg-[#075749] text-[#9acb03] flex items-center justify-center font-bold text-sm shadow-inner shrink-0">
-                        {{ substr(Auth::user()->name, 0, 1) }}
-                    </div>
-                    <div class="hidden sm:flex flex-col">
-                        <span class="text-sm font-semibold text-fg leading-tight">{{ Auth::user()->name }}</span>
-                        <span class="text-[10px] text-muted">{!! Auth::user()->tenant->business_name ?? 'UMKM' !!}</span>
-                    </div>
+    {{-- MAIN --}}
+    <div class="admin-main">
+        {{-- Topbar --}}
+        <header class="admin-topbar">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden" style="background:none;border:none;cursor:pointer;padding:4px;">
+                    <svg width="20" height="20" fill="none" stroke="#374151" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <div>
+                    <h1 style="font-size:16px;font-weight:700;color:#111827;margin:0;line-height:1.2;">@yield('page-title', 'Dashboard')</h1>
+                    <p style="font-size:11px;color:#9ca3af;margin:0;font-weight:400;">Pusat kendali bisnis Anda</p>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                @if(Auth::user()->tenant && Auth::user()->tenant->publicUrl())
+                <a href="{{ Auth::user()->tenant->publicUrl() }}" target="_blank" style="display:flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:500;text-decoration:none;transition:all 0.2s;">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    Lihat Website
+                </a>
+                @endif
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="width:32px;height:32px;background:linear-gradient(135deg,#9acb03,#075749);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;">{{ strtoupper(substr(Auth::user()->name,0,1)) }}</div>
+                    <span style="font-size:13px;font-weight:500;color:#374151;" class="hidden sm:inline-block">{{ Auth::user()->name }}</span>
                 </div>
             </div>
         </header>
 
-        {{-- Page Content --}}
-        <div class="p-6 lg:p-10">
+        {{-- Content --}}
+        <main style="flex:1;padding:24px 28px;">
             @yield('content')
-        </div>
+        </main>
+    </div>
+</div>
 
-    </main>
-    
-    @stack('scripts')
-    <style>
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-    </style>
+@stack('scripts')
 </body>
 </html>
