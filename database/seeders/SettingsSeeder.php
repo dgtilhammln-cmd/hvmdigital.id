@@ -136,6 +136,12 @@ class SettingsSeeder extends Seeder
             ['key' => 'feed_4_image', 'value' => '', 'group' => 'feeds', 'type' => 'image', 'label' => 'Instagram Feed 4 — Gambar (3375x4219)'],
             ['key' => 'feed_4_alt',   'value' => 'Desain Feed Instagram HVM Digital 4', 'group' => 'feeds', 'type' => 'text', 'label' => 'Instagram Feed 4 — Alt Text (SEO)'],
             ['key' => 'feed_4_link',  'value' => 'https://www.instagram.com/hvmdigital.id', 'group' => 'feeds', 'type' => 'text', 'label' => 'Instagram Feed 4 — Link URL'],
+
+            // Payment Gateway (Midtrans)
+            ['key' => 'midtrans_server_key',  'value' => '', 'group' => 'payment', 'type' => 'text', 'label' => 'Midtrans Server Key'],
+            ['key' => 'midtrans_client_key',  'value' => '', 'group' => 'payment', 'type' => 'text', 'label' => 'Midtrans Client Key'],
+            ['key' => 'midtrans_merchant_id', 'value' => '', 'group' => 'payment', 'type' => 'text', 'label' => 'Midtrans Merchant ID'],
+            ['key' => 'midtrans_environment', 'value' => 'sandbox', 'group' => 'payment', 'type' => 'text', 'label' => 'Environment (sandbox / production)'],
         ];
 
         foreach ($settings as $setting) {
