@@ -276,6 +276,15 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 Route::get('/robots.txt',  [SitemapController::class, 'robots']);
 
 // ========================================
+// TENANT DASHBOARD (Requires Auth & Tenant Middleware)
+// ========================================
+Route::middleware(['auth'])->prefix('dashboard')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Tenant\TenantDashboardController::class, 'index'])->name('tenant.dashboard');
+    Route::get('/upgrade', [\App\Http\Controllers\Tenant\TenantUpgradeController::class, 'index'])->name('tenant.upgrade');
+    Route::post('/upgrade/check-domain', [\App\Http\Controllers\Tenant\TenantUpgradeController::class, 'checkDomain'])->name('tenant.upgrade.check');
+});
+
+// ========================================
 // USER AUTH (Register, Login, Logout)
 // ========================================
 Route::get('/register', [\App\Http\Controllers\UserAuthController::class, 'showRegister'])->name('register');
