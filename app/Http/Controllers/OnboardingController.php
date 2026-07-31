@@ -110,14 +110,15 @@ class OnboardingController extends Controller
                 'slug'            => $slug,
                 'plan'            => 'free',
                 'onboarding_step' => 3,
-                'status'          => 'active', // Free users go live immediately
+                'status'          => 'active',
             ]);
         } else {
             $tenant->update([
+                'domain_name'     => $validated['domain_name'],
                 'plan'            => 'pro',
                 'onboarding_step' => 3,
+                'status'          => 'active',
             ]);
-            // Domain checkout will be handled separately via Midtrans
         }
 
         return response()->json(['success' => true, 'step' => 3]);

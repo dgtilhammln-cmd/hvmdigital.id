@@ -97,7 +97,8 @@
                         x-transition:enter-end="opacity-100 translate-x-0">
                         <div>
                             <h2 class="text-xl font-bold text-fg mb-1">Informasi Dasar</h2>
-                            <p class="text-muted text-sm font-light mb-6">Data ini akan ditampilkan di website Anda.</p>
+                            <p class="text-muted text-sm font-light mb-6">Pastikan data yang diisi sesuai dengan dokumen
+                                legalitas usaha Anda.</p>
 
                             <div class="space-y-4">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -126,13 +127,15 @@
                                 {{-- Dokumen Uploads --}}
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-fg mb-1">Dokumen Legalitas (NIB/KTP) <span class="text-red-500">*</span></label>
+                                        <label class="block text-sm font-medium text-fg mb-1">Dokumen Legalitas (NIB/KTP)
+                                            <span class="text-red-500">*</span></label>
                                         <input type="file" x-ref="legal_file" accept="image/*"
                                             class="w-full px-4 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:outline-none focus:ring-2 focus:ring-[#9acb03]/50 focus:border-[#9acb03] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#075749] file:text-white hover:file:bg-[#053d33] transition-all">
                                         <p class="text-[10px] text-muted mt-1">Jika belum ada NIB, bisa gunakan KTP.</p>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-fg mb-1">Foto Toko / Usaha <span class="text-red-500">*</span></label>
+                                        <label class="block text-sm font-medium text-fg mb-1">Foto Toko / Usaha <span
+                                                class="text-red-500">*</span></label>
                                         <input type="file" x-ref="store_file" accept="image/*"
                                             class="w-full px-4 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:outline-none focus:ring-2 focus:ring-[#9acb03]/50 focus:border-[#9acb03] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#075749] file:text-white hover:file:bg-[#053d33] transition-all">
                                         <p class="text-[10px] text-muted mt-1">Upload foto lokasi usaha Anda.</p>
@@ -141,16 +144,18 @@
 
                                 {{-- Kontak --}}
                                 <div class="mb-4">
-                                    <label class="block text-sm font-medium text-fg mb-1">No. WhatsApp <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-medium text-fg mb-1">No. WhatsApp <span
+                                            class="text-red-500">*</span></label>
                                     <input type="tel" x-model="form.whatsapp"
                                         class="w-full sm:w-[calc(50%-0.5rem)] px-4 py-2.5 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:outline-none focus:ring-2 focus:ring-[#9acb03]/50 focus:border-[#9acb03] transition-all"
                                         placeholder="08123456789">
                                 </div>
-                                
+
                                 {{-- Alamat Terklasifikasi --}}
                                 <div class="mt-2 border-t border-theme pt-4">
                                     <div class="flex items-center justify-between mb-3">
-                                        <label class="block text-sm font-medium text-fg">Alamat Lengkap <span class="text-red-500">*</span></label>
+                                        <label class="block text-sm font-medium text-fg">Alamat Lengkap <span
+                                                class="text-red-500">*</span></label>
                                         <button type="button" @click="autoLocation()"
                                             class="text-xs flex items-center gap-1 text-[#9acb03] hover:text-[#7a9e02] transition-colors"
                                             :disabled="locating">
@@ -171,7 +176,7 @@
                                             <span x-text="locating ? 'Mencari...' : 'Auto Lokasi'"></span>
                                         </button>
                                     </div>
-                                    
+
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <textarea x-model="form.address" rows="5"
@@ -240,7 +245,7 @@
                         <div>
                             <h2 class="text-xl font-bold text-fg mb-1">Pilih Alamat Website</h2>
                             <p class="text-muted text-sm font-light mb-6">Pilih antara domain gratis HVM atau domain
-                                profesional (.com, .id).</p>
+                                profesional (.com, .id, .my.id, dll..).</p>
 
                             {{-- Type Select --}}
                             <div class="flex gap-4 mb-6">
@@ -264,9 +269,9 @@
                                     <input type="radio" x-model="form.domain_type" value="custom" class="sr-only">
                                     <div class="p-4 rounded-xl border-2 transition-all duration-200 h-full flex flex-col items-center justify-center text-center"
                                         :class="form.domain_type === 'custom' ? 'border-[#9acb03] bg-green-50 dark:bg-green-900/10' : 'border-theme'">
-                                        <div
-                                            class="absolute -top-2 -right-2 bg-gradient-to-r from-[#075749] to-[#9acb03] text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
-                                            POPULER</div>
+                                        <div class="mb-2">
+                                            <span class="bg-gradient-to-r from-[#075749] to-[#9acb03] text-white text-[9px] font-bold px-2 py-0.5 rounded-full">POPULER</span>
+                                        </div>
                                         <div
                                             class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-2 group-hover:bg-[#9acb03]/20 text-muted transition-colors">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -323,7 +328,7 @@
                                     class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
                                     <template x-for="(result, idx) in domainResults" :key="idx">
                                         <div class="p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all"
-                                            :class="result.available ? (form.domain_name === result.domain ? 'border-[#9acb03] bg-green-50 dark:bg-green-900/20' : 'border-theme hover:border-[#9acb03]/50') : 'border-theme bg-gray-50 dark:bg-gray-800/50 opacity-60 cursor-not-allowed'"
+                                            :class="result.available ? (form.domain_name === result.domain ? 'border-[#9acb03] bg-[#9acb03]/10' : 'border-theme hover:border-[#9acb03]/50 bg-surface dark:bg-[#0d1f15]') : 'border-theme bg-surface dark:bg-[#0d1f15] opacity-50 cursor-not-allowed'"
                                             @click="result.available && (form.domain_name = result.domain)">
                                             <div>
                                                 <span class="font-medium text-sm text-fg" x-text="result.domain"></span>
@@ -429,8 +434,8 @@
                     domainResults: [],
 
                     form: {
-                        business_name: '',
-                        slug: '',
+                        business_name: '{{ $tenant->business_name ?? "" }}',
+                        slug: '{{ $tenant->slug ?? Str::slug($tenant->business_name ?? "") }}',
                         business_type: '{{ $tenant->business_type ?? "" }}',
                         whatsapp: '{{ $tenant->whatsapp ?? "" }}',
                         address: '{{ $tenant->address ?? "" }}',
@@ -495,7 +500,7 @@
                     autoLocation() {
                         if (!navigator.geolocation) { this.showAlert('Browser tidak mendukung lokasi', 'error'); return; }
                         this.locating = true;
-                        
+
                         // Menampilkan alert info agar user sadar ada popup izin yang harus diklik
                         this.alertMessage = 'Meminta izin lokasi... Pastikan Anda menekan "Allow" atau "Izinkan" pada popup browser.';
                         this.alertType = 'info';
