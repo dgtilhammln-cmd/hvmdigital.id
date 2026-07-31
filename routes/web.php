@@ -278,12 +278,10 @@ Route::get('/robots.txt',  [SitemapController::class, 'robots']);
 // ========================================
 // USER AUTH (Register, Login, Logout)
 // ========================================
-Route::middleware('guest')->group(function () {
-    Route::get('/register', [\App\Http\Controllers\UserAuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [\App\Http\Controllers\UserAuthController::class, 'register']);
-    Route::get('/login', [\App\Http\Controllers\UserAuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [\App\Http\Controllers\UserAuthController::class, 'login']);
-});
+Route::get('/register', [\App\Http\Controllers\UserAuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [\App\Http\Controllers\UserAuthController::class, 'register']);
+Route::get('/login', [\App\Http\Controllers\UserAuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [\App\Http\Controllers\UserAuthController::class, 'login']);
 Route::post('/logout', [\App\Http\Controllers\UserAuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // ========================================
