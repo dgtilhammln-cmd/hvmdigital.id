@@ -65,7 +65,7 @@
                         @elseif($group === 'feeds')
                             <p class="text-white/40 text-sm font-light">Kelola 4 desain feeds Instagram HVM Digital (Rasio 4:5, 3375x4219). Tampil di halaman utama untuk meningkatkan interaksi sosial media dan SEO.</p>
                         @elseif($group === 'payment')
-                            <p class="text-white/40 text-sm font-light">Konfigurasi API Key Midtrans untuk menerima pembayaran otomatis dari Tenant.</p>
+                            <p class="text-white/40 text-sm font-light">Masukkan API Key untuk Payment Gateway Midtrans dan layanan cek ketersediaan Domain (WhoisJSON).</p>
                         @else
                             <p class="text-white/40 text-sm font-light">Kelola konfigurasi {{ $group }} untuk seluruh situs.</p>
                         @endif
@@ -200,6 +200,50 @@
                             </div>
                         </div>
                         @endforeach
+                    </div>
+
+                    @elseif($group === 'payment')
+                    {{-- Custom grouped payment settings --}}
+                    <div class="space-y-8 relative z-10">
+
+                        {{-- WhoisJSON --}}
+                        <div class="bg-white/3 border border-white/5 rounded-xl p-6">
+                            <p class="text-[#9acb03] text-[10px] uppercase tracking-widest mb-1 font-semibold">Domain Checker</p>
+                            <p class="text-white/30 text-xs mb-5">Digunakan oleh form Upgrade Website untuk mengecek ketersediaan domain secara real-time melalui WhoisJSON.com.</p>
+                            @php $whoisKey = $items->firstWhere('key', 'whoisjson_api_key'); @endphp
+                            @if($whoisKey)
+                            <div>
+                                <label class="block text-white/60 text-xs font-medium mb-2.5">{{ $whoisKey->label ?? 'WhoisJSON API Key' }}</label>
+                                <input type="text" name="whoisjson_api_key" value="{{ $whoisKey->value }}"
+                                       placeholder="Masukkan API Key dari whoisjson.com/account"
+                                       class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 focus:bg-[#0a1f12] transition-all">
+                            </div>
+                            @else
+                            <input type="text" name="whoisjson_api_key" value=""
+                                   placeholder="Masukkan API Key dari whoisjson.com/account"
+                                   class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 focus:bg-[#0a1f12] transition-all">
+                            @endif
+                        </div>
+
+                        {{-- Midtrans --}}
+                        <div class="bg-white/3 border border-white/5 rounded-xl p-6">
+                            <p class="text-[#9acb03] text-[10px] uppercase tracking-widest mb-1 font-semibold">Midtrans Payment Gateway</p>
+                            <p class="text-white/30 text-xs mb-5">Kunci API untuk memproses pembayaran otomatis dari Tenant saat upgrade paket domain. Dapatkan key di <span class="text-white/50">dashboard.midtrans.com</span>.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                @foreach(['midtrans_server_key', 'midtrans_client_key', 'midtrans_merchant_id', 'midtrans_environment'] as $mKey)
+                                @php $mSetting = $items->firstWhere('key', $mKey); @endphp
+                                <div>
+                                    <label class="block text-white/60 text-xs font-medium mb-2.5">
+                                        {{ $mSetting->label ?? $mKey }}
+                                    </label>
+                                    <input type="text" name="{{ $mKey }}" value="{{ $mSetting?->value ?? '' }}"
+                                           placeholder="{{ str_contains($mKey, 'key') ? 'SB-Mid-server-...' : ($mKey === 'midtrans_environment' ? 'sandbox atau production' : 'G123456789') }}"
+                                           class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 focus:bg-[#0a1f12] transition-all">
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+
                     </div>
 
                     @else
