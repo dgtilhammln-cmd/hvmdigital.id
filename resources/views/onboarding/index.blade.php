@@ -1,14 +1,8 @@
 @extends('layouts.auth')
 
 @section('content')
-<section class="min-h-screen py-16 px-4 relative overflow-hidden bg-surface dark:bg-[#061009]" x-data="onboardingWizard()">
-    {{-- Background --}}
-    <div class="absolute inset-0 pointer-events-none">
-        <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-br from-[#075749]/10 to-[#9acb03]/10 blur-3xl"></div>
-        <div class="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-gradient-to-tr from-[#9acb03]/10 to-[#075749]/10 blur-3xl"></div>
-    </div>
-
-    <div class="max-w-4xl mx-auto relative z-10">
+<section class="min-h-screen py-16 px-4 relative flex items-center" x-data="onboardingWizard()">
+    <div class="w-full max-w-4xl mx-auto relative z-10">
         {{-- Header & Progress --}}
         <div class="flex flex-col md:flex-row items-center justify-between mb-8 gap-6">
             <div class="text-center md:text-left">
@@ -41,7 +35,7 @@
             </div>
         </div>
 
-        <div class="bg-card dark:bg-card-dark rounded-3xl border border-theme shadow-xl overflow-hidden flex flex-col md:flex-row min-h-[500px]">
+        <div class="bg-white/5 dark:bg-black/20 backdrop-blur-xl rounded-3xl border border-white/5 shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[500px]">
             
             {{-- Left Side Info (Static) --}}
             <div class="hidden md:flex flex-col justify-between w-1/3 bg-[#075749] text-white p-8 relative overflow-hidden">
@@ -240,14 +234,14 @@
 
                 {{-- ===================== STEP 3: Loading/Redirecting ===================== --}}
                 <div x-show="step === 3" style="display:none" class="flex-1 flex flex-col items-center justify-center text-center" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
-                    <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-500 mb-4 animate-bounce">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <div class="w-20 h-20 bg-[#9acb03]/10 rounded-full flex items-center justify-center text-[#9acb03] mb-6 shadow-[0_0_30px_rgba(154,203,3,0.2)] animate-pulse">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     </div>
-                    <h2 class="text-xl font-bold text-fg mb-2">Profil Tersimpan!</h2>
-                    <p class="text-muted text-sm font-light mb-6">Mengarahkan Anda ke halaman selanjutnya...</p>
-                    <svg class="w-6 h-6 animate-spin text-[#9acb03]" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                    <h2 class="text-3xl font-bold text-fg mb-3">Profil Tersimpan!</h2>
+                    <p class="text-muted text-base font-light mb-8 max-w-xs mx-auto">Kami sedang menyiapkan dashboard bisnis Anda. Mohon tunggu sebentar...</p>
+                    <svg class="w-8 h-8 animate-spin text-[#9acb03]" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                     
-                    <a href="{{ route('tenant.dashboard') }}" class="mt-8 text-xs text-[#9acb03] underline">Jika tidak diarahkan otomatis, klik di sini.</a>
+                    <a href="{{ route('tenant.dashboard') }}" class="mt-12 text-sm text-fg font-medium hover:text-[#9acb03] transition-colors border-b border-transparent hover:border-[#9acb03]">Klik di sini jika tidak otomatis beralih</a>
                 </div>
 
             </div>

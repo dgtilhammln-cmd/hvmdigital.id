@@ -26,7 +26,13 @@ class OnboardingController extends Controller
 
         // If already active, redirect to tenant dashboard
         if ($tenant->status === 'active') {
-            return redirect()->route('tenant.dashboard');
+            if (empty($tenant->plan)) {
+                // Fix for users stuck in active status without choosing a domain/plan
+                $tenant->update(['status' => 'onboarding', 'onboarding_step' => 2]);
+                $tenant->refresh();
+            } else {
+                return redirect()->route('tenant.dashboard');
+            }
         }
 
         return view('onboarding.index', compact('tenant'));
