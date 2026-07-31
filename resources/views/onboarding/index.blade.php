@@ -126,13 +126,13 @@
                                 {{-- Dokumen Uploads --}}
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-fg mb-1">Dokumen Legalitas (NIB/KTP)</label>
+                                        <label class="block text-sm font-medium text-fg mb-1">Dokumen Legalitas (NIB/KTP) <span class="text-red-500">*</span></label>
                                         <input type="file" x-ref="legal_file" accept="image/*"
                                             class="w-full px-4 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:outline-none focus:ring-2 focus:ring-[#9acb03]/50 focus:border-[#9acb03] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#075749] file:text-white hover:file:bg-[#053d33] transition-all">
                                         <p class="text-[10px] text-muted mt-1">Jika belum ada NIB, bisa gunakan KTP.</p>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-fg mb-1">Foto Toko / Usaha</label>
+                                        <label class="block text-sm font-medium text-fg mb-1">Foto Toko / Usaha <span class="text-red-500">*</span></label>
                                         <input type="file" x-ref="store_file" accept="image/*"
                                             class="w-full px-4 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:outline-none focus:ring-2 focus:ring-[#9acb03]/50 focus:border-[#9acb03] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#075749] file:text-white hover:file:bg-[#053d33] transition-all">
                                         <p class="text-[10px] text-muted mt-1">Upload foto lokasi usaha Anda.</p>
@@ -140,74 +140,79 @@
                                 </div>
 
                                 {{-- Kontak --}}
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-fg mb-1">No. WhatsApp</label>
-                                        <input type="tel" x-model="form.whatsapp"
-                                            class="w-full px-4 py-2.5 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:outline-none focus:ring-2 focus:ring-[#9acb03]/50 focus:border-[#9acb03] transition-all"
-                                            placeholder="08123456789">
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-fg mb-1">No. WhatsApp <span class="text-red-500">*</span></label>
+                                    <input type="tel" x-model="form.whatsapp"
+                                        class="w-full sm:w-[calc(50%-0.5rem)] px-4 py-2.5 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:outline-none focus:ring-2 focus:ring-[#9acb03]/50 focus:border-[#9acb03] transition-all"
+                                        placeholder="08123456789">
+                                </div>
+                                
+                                {{-- Alamat Terklasifikasi --}}
+                                <div class="mt-2 border-t border-theme pt-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <label class="block text-sm font-medium text-fg">Alamat Lengkap <span class="text-red-500">*</span></label>
+                                        <button type="button" @click="autoLocation()"
+                                            class="text-xs flex items-center gap-1 text-[#9acb03] hover:text-[#7a9e02] transition-colors"
+                                            :disabled="locating">
+                                            <svg x-show="!locating" class="w-3 h-3" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            <svg x-show="locating" class="w-3 h-3 animate-spin" fill="none"
+                                                viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                            </svg>
+                                            <span x-text="locating ? 'Mencari...' : 'Auto Lokasi'"></span>
+                                        </button>
                                     </div>
-                                    {{-- Alamat Terklasifikasi --}}
-                                    <div>
-                                        <div class="flex items-center justify-between mb-2">
-                                            <label class="block text-sm font-medium text-fg">Alamat Lengkap</label>
-                                            <button type="button" @click="autoLocation()"
-                                                class="text-xs flex items-center gap-1 text-[#9acb03] hover:text-[#7a9e02] transition-colors"
-                                                :disabled="locating">
-                                                <svg x-show="!locating" class="w-3 h-3" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                </svg>
-                                                <svg x-show="locating" class="w-3 h-3 animate-spin" fill="none"
-                                                    viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                        stroke-width="4"></circle>
-                                                    <path class="opacity-75" fill="currentColor"
-                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                                                </svg>
-                                                <span x-text="locating ? 'Mencari...' : 'Auto Lokasi'"></span>
-                                            </button>
+                                    
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <textarea x-model="form.address" rows="5"
+                                                class="w-full h-full min-h-[120px] px-4 py-2.5 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:outline-none focus:ring-2 focus:ring-[#9acb03]/50 focus:border-[#9acb03] transition-all resize-none"
+                                                placeholder="Detail Jalan (Cth: Jl. Raya Mawar No. 10, RT 01/02)"></textarea>
                                         </div>
-                                        <textarea x-model="form.address" rows="2"
-                                            class="w-full px-4 py-2.5 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:outline-none focus:ring-2 focus:ring-[#9acb03]/50 focus:border-[#9acb03] transition-all mb-3"
-                                            placeholder="Detail Jalan (Cth: Jl. Raya Mawar No. 10, RT 01/02)"></textarea>
-                                            
-                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
-                                            <select x-model="t_prov" @change="fetchRegencies()"
-                                                class="w-full px-3 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:ring-[#9acb03]/50 focus:border-[#9acb03]">
-                                                <option value="">Pilih Provinsi...</option>
-                                                <template x-for="p in provinces" :key="p.id">
-                                                    <option :value="p.id" x-text="p.name"></option>
-                                                </template>
-                                            </select>
-                                            <select x-model="t_reg" @change="fetchDistricts()" :disabled="!t_prov"
-                                                class="w-full px-3 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:ring-[#9acb03]/50 focus:border-[#9acb03] disabled:opacity-50">
-                                                <option value="">Pilih Kota/Kab...</option>
-                                                <template x-for="r in regencies" :key="r.id">
-                                                    <option :value="r.id" x-text="r.name"></option>
-                                                </template>
-                                            </select>
-                                            <select x-model="t_dist" @change="fetchVillages()" :disabled="!t_reg"
-                                                class="w-full px-3 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:ring-[#9acb03]/50 focus:border-[#9acb03] disabled:opacity-50">
-                                                <option value="">Pilih Kecamatan...</option>
-                                                <template x-for="d in districts" :key="d.id">
-                                                    <option :value="d.id" x-text="d.name"></option>
-                                                </template>
-                                            </select>
-                                            <select x-model="t_vill" @change="updateCityForm()" :disabled="!t_dist"
-                                                class="w-full px-3 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:ring-[#9acb03]/50 focus:border-[#9acb03] disabled:opacity-50">
-                                                <option value="">Pilih Kelurahan...</option>
-                                                <template x-for="v in villages" :key="v.id">
-                                                    <option :value="v.id" x-text="v.name"></option>
-                                                </template>
-                                            </select>
+                                        <div class="flex flex-col gap-3">
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <select x-model="t_prov" @change="fetchRegencies()"
+                                                    class="w-full px-3 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:ring-[#9acb03]/50 focus:border-[#9acb03]">
+                                                    <option value="">Pilih Provinsi...</option>
+                                                    <template x-for="p in provinces" :key="p.id">
+                                                        <option :value="p.id" x-text="p.name"></option>
+                                                    </template>
+                                                </select>
+                                                <select x-model="t_reg" @change="fetchDistricts()" :disabled="!t_prov"
+                                                    class="w-full px-3 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:ring-[#9acb03]/50 focus:border-[#9acb03] disabled:opacity-50">
+                                                    <option value="">Pilih Kota/Kab...</option>
+                                                    <template x-for="r in regencies" :key="r.id">
+                                                        <option :value="r.id" x-text="r.name"></option>
+                                                    </template>
+                                                </select>
+                                                <select x-model="t_dist" @change="fetchVillages()" :disabled="!t_reg"
+                                                    class="w-full px-3 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:ring-[#9acb03]/50 focus:border-[#9acb03] disabled:opacity-50">
+                                                    <option value="">Pilih Kecamatan...</option>
+                                                    <template x-for="d in districts" :key="d.id">
+                                                        <option :value="d.id" x-text="d.name"></option>
+                                                    </template>
+                                                </select>
+                                                <select x-model="t_vill" @change="updateCityForm()" :disabled="!t_dist"
+                                                    class="w-full px-3 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:ring-[#9acb03]/50 focus:border-[#9acb03] disabled:opacity-50">
+                                                    <option value="">Pilih Kelurahan...</option>
+                                                    <template x-for="v in villages" :key="v.id">
+                                                        <option :value="v.id" x-text="v.name"></option>
+                                                    </template>
+                                                </select>
+                                            </div>
+                                            <input type="text" x-model="form.city" readonly
+                                                class="w-full px-4 py-2.5 rounded-xl border border-theme bg-[#075749]/10 dark:bg-[#0d1f15] text-muted text-sm cursor-not-allowed"
+                                                placeholder="Wilayah lengkap otomatis terisi...">
                                         </div>
-                                        <input type="text" x-model="form.city" readonly
-                                            class="w-full px-4 py-2.5 rounded-xl border border-theme bg-[#075749]/10 dark:bg-[#0d1f15] text-muted text-sm cursor-not-allowed"
-                                            placeholder="Wilayah lengkap otomatis terisi...">
                                     </div>
                                 </div>
                             </div>
@@ -518,8 +523,16 @@
                     },
 
                     async saveStep1() {
-                        if (!this.form.business_name || !this.form.business_type) {
-                            this.showAlert('Nama Usaha dan Kategori wajib diisi.', 'error');
+                        if (!this.form.business_name || !this.form.business_type || !this.form.whatsapp || !this.form.address || !this.form.city) {
+                            this.showAlert('Semua form wajib diisi dan tidak boleh terlewat.', 'error');
+                            return;
+                        }
+                        if (!this.$refs.legal_file || !this.$refs.legal_file.files[0]) {
+                            this.showAlert('Dokumen Legalitas (NIB/KTP) wajib diunggah.', 'error');
+                            return;
+                        }
+                        if (!this.$refs.store_file || !this.$refs.store_file.files[0]) {
+                            this.showAlert('Foto Toko / Usaha wajib diunggah.', 'error');
                             return;
                         }
                         this.saving = true;

@@ -49,18 +49,18 @@ class OnboardingController extends Controller
             'business_category' => 'nullable|string|max:100',
             'description'       => 'nullable|string|max:1000',
             'phone'             => 'nullable|string|max:20',
-            'whatsapp'          => 'nullable|string|max:20',
+            'whatsapp'          => 'required|string|max:20',
             'email_business'    => 'nullable|email|max:255',
-            'address'           => 'nullable|string|max:500',
-            'city'              => 'nullable|string|max:100',
+            'address'           => 'required|string|max:500',
+            'city'              => 'required|string|max:100',
             'province'          => 'nullable|string|max:100',
             'postal_code'       => 'nullable|string|max:10',
             'nib'               => 'nullable|string|max:50',
             'npwp'              => 'nullable|string|max:50',
             'instagram'         => 'nullable|string|max:255',
             'facebook'          => 'nullable|string|max:255',
-            'legal_document'    => 'nullable|image|max:5120', // Max 5MB
-            'store_photo'       => 'nullable|image|max:5120',
+            'legal_document'    => 'required|image|max:5120', // Max 5MB
+            'store_photo'       => 'required|image|max:5120',
         ]);
 
         $tenant = Auth::user()->tenant;
