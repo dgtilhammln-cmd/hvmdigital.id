@@ -435,6 +435,8 @@
                         whatsapp: '{{ $tenant->whatsapp ?? "" }}',
                         address: '{{ $tenant->address ?? "" }}',
                         city: '{{ $tenant->city ?? "" }}',
+                        latitude: '{{ $tenant->latitude ?? "" }}',
+                        longitude: '{{ $tenant->longitude ?? "" }}',
                         domain_type: '{{ ($tenant->plan ?? "free") === "pro" ? "custom" : "free" }}',
                         domain_name: '',
                     },
@@ -493,7 +495,16 @@
                     autoLocation() {
                         if (!navigator.geolocation) { this.showAlert('Browser tidak mendukung lokasi', 'error'); return; }
                         this.locating = true;
+                        
+                        // Menampilkan alert info agar user sadar ada popup izin yang harus diklik
+                        this.alertMessage = 'Meminta izin lokasi... Pastikan Anda menekan "Allow" atau "Izinkan" pada popup browser.';
+                        this.alertType = 'info';
+
                         navigator.geolocation.getCurrentPosition(async (pos) => {
+                            this.alertMessage = ''; // Hapus pesan info
+                            this.form.latitude = pos.coords.latitude;
+                            this.form.longitude = pos.coords.longitude;
+
                             try {
                                 const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&zoom=18&addressdetails=1`);
                                 const data = await res.json();
@@ -504,7 +515,16 @@
                                     if (ad.county || ad.city_district) arr.push('Kec. ' + (ad.county || ad.city_district));
                                     if (ad.city || ad.town || ad.municipality) arr.push(ad.city || ad.town || ad.municipality);
                                     if (ad.state) arr.push('Prov. ' + ad.state);
-                                    this.form.city = arr.join(', ') + (data.display_name ? ` (${data.display_name.substring(0, 40)}...)` : '');
+                                    this.form.city = arr.join(', ');
+
+                                    // Isi alamat jalan otomatis jika ada
+                                    let jalan = [];
+                                    if (ad.road) jalan.push('Jl. ' + ad.road);
+                                    if (ad.house_number) jalan.push('No. ' + ad.house_number);
+                                    if (jalan.length > 0) {
+                                        this.form.address = jalan.join(', ') + (data.display_name ? ', ' + data.display_name.split(',')[0] : '');
+                                    }
+
                                     // Reset dropdowns to avoid confusion
                                     this.t_prov = ''; this.t_reg = ''; this.t_dist = ''; this.t_vill = '';
                                 }
@@ -512,8 +532,12 @@
                             this.locating = false;
                         }, (err) => {
                             this.locating = false;
-                            console.log('Izin lokasi ditolak atau gagal.');
-                        });
+                            if (err.code === 1) { // PERMISSION_DENIED
+                                this.showAlert('Izin lokasi ditolak. Silakan izinkan akses lokasi (klik ikon gembok di sebelah URL) atau isi manual.', 'error');
+                            } else {
+                                this.showAlert('Gagal mendapatkan lokasi. Silakan isi manual.', 'error');
+                            }
+                        }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
                     },
 
                     generateSlug() {

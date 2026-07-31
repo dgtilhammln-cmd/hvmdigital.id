@@ -59,6 +59,8 @@ class OnboardingController extends Controller
             'npwp'              => 'nullable|string|max:50',
             'instagram'         => 'nullable|string|max:255',
             'facebook'          => 'nullable|string|max:255',
+            'latitude'          => 'nullable|numeric',
+            'longitude'         => 'nullable|numeric',
             'legal_document'    => 'required|image|max:5120', // Max 5MB
             'store_photo'       => 'required|image|max:5120',
         ]);
