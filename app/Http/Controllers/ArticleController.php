@@ -135,18 +135,39 @@ class ArticleController extends Controller
             return "<{$tag} id=\"{$id}\">{$text}</{$tag}>";
         }, $parsedHtml);
 
-        // 3. Auto-inject Internal Link (Baca Juga)
+        // 3. Auto-inject Internal Link (Baca Juga) & AEO Key Takeaways
         if ($related->isNotEmpty()) {
             $bacaJuga = $related->first();
             $bacaJugaHtml = '<div class="my-8 p-5 bg-card dark:bg-card-dark border-l-4 border-lime shadow-sm rounded-r-xl"><span class="font-bold text-lime-dark dark:text-lime">Baca Juga:</span> <a href="'.route('articles.show', $bacaJuga->slug).'" class="font-semibold text-fg hover:text-lime transition-colors underline decoration-lime/30 underline-offset-4">'.$bacaJuga->title.'</a></div>';
             
-            $paragraphs = explode('</p>', $parsedHtml);
-            if (count($paragraphs) > 3) {
-                // Insert after the 2nd paragraph
-                array_splice($paragraphs, 2, 0, $bacaJugaHtml);
-                $parsedHtml = implode('</p>', $paragraphs);
+            // Generate AEO Key Takeaways (Poin Penting) from TOC
+            $keyTakeawaysHtml = '';
+            if (count($toc) >= 2) {
+                $takeaways = collect($toc)->filter(fn($item) => $item['level'] === 2)->take(5)->map(fn($item) => '<li><a href="#' . $item['id'] . '" class="hover:text-lime transition-colors">' . $item['title'] . '</a></li>')->implode('');
+                if (!empty($takeaways)) {
+                    $keyTakeawaysHtml = '<div class="my-8 p-6 bg-[#f0fdf4] dark:bg-[#0d1f15] border border-lime/20 shadow-md rounded-2xl"><h3 class="font-bold text-lg text-lime-dark dark:text-lime mb-3 flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Poin Penting (Key Takeaways)</h3><ul class="list-disc list-inside space-y-2 text-fg/80 dark:text-gray-300">' . $takeaways . '</ul></div>';
+                }
             }
+
+            $paragraphs = explode('</p>', $parsedHtml);
+            
+            // Insert Key Takeaways before the very first paragraph
+            if (!empty($keyTakeawaysHtml) && count($paragraphs) > 1) {
+                array_splice($paragraphs, 0, 0, $keyTakeawaysHtml);
+            }
+            
+            // Insert Baca Juga after the 3rd paragraph (or at the end if fewer)
+            if (count($paragraphs) > 3) {
+                array_splice($paragraphs, 3, 0, $bacaJugaHtml);
+            } else {
+                $paragraphs[] = $bacaJugaHtml;
+            }
+            
+            $parsedHtml = implode('</p>', $paragraphs);
         }
+        
+        // 4. SEO Core Web Vitals: Auto-inject loading="lazy" to all images
+        $parsedHtml = preg_replace('/<img(?![^>]*loading=)/i', '<img loading="lazy"', $parsedHtml);
 
         $article->parsed_content = $parsedHtml;
         $article->toc = $toc;

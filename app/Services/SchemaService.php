@@ -287,8 +287,17 @@ class SchemaService
             ],
             'author' => [
                 '@type' => 'Person',
-                'name' => 'Tim HVM Digital',
-                'url' => url('/'),
+                'name' => 'Ilham Maulana',
+                'url' => url('/about'),
+                'jobTitle' => 'CEO & SEO Specialist',
+                'worksFor' => [
+                    '@type' => 'Organization',
+                    'name' => 'HVM Digital'
+                ],
+                'sameAs' => [
+                    'https://www.linkedin.com/in/ilham-maulana',
+                    'https://www.instagram.com/hvmdigital.id'
+                ]
             ],
             'publisher' => [
                 '@type' => 'Organization',
