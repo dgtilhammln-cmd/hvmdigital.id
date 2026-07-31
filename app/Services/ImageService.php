@@ -87,7 +87,7 @@ class ImageService
         ?string $customName = null
     ): array {
         $extension = strtolower($file->getClientOriginalExtension());
-        if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
+        if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'ico'])) {
             $extension = 'png';
         }
 
@@ -105,19 +105,23 @@ class ImageService
         $filename = $filename . '_' . substr(md5(uniqid()), 0, 5) . '.' . $extension;
         $path     = "{$directory}/{$filename}";
 
-        $image = $this->manager->decodePath($file->getRealPath());
-        if ($image->width() > $maxWidth) {
-            $image->scale(width: $maxWidth);
+        if ($extension === 'ico') {
+            Storage::disk('public')->put($path, file_get_contents($file->getRealPath()));
+        } else {
+            $image = $this->manager->decodePath($file->getRealPath());
+            if ($image->width() > $maxWidth) {
+                $image->scaleDown(width: $maxWidth);
+            }
+
+            $encoder = match ($extension) {
+                'jpg', 'jpeg' => new \Intervention\Image\Encoders\JpegEncoder(quality: 90),
+                'gif'         => new \Intervention\Image\Encoders\GifEncoder(),
+                default       => new \Intervention\Image\Encoders\PngEncoder(),
+            };
+
+            $encoded = $image->encode($encoder);
+            Storage::disk('public')->put($path, (string) $encoded);
         }
-
-        $encoder = match ($extension) {
-            'jpg', 'jpeg' => new \Intervention\Image\Encoders\JpegEncoder(quality: 90),
-            'gif'         => new \Intervention\Image\Encoders\GifEncoder(),
-            default       => new \Intervention\Image\Encoders\PngEncoder(),
-        };
-
-        $encoded = $image->encode($encoder);
-        Storage::disk('public')->put($path, (string) $encoded);
 
         return [
             'path' => $path,

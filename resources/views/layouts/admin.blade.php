@@ -9,9 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @php
         $faviconUrl = setting('favicon') ? get_image_url(setting('favicon')) : asset('favicon.ico');
+        $faviconExt = pathinfo($faviconUrl, PATHINFO_EXTENSION);
+        $faviconType = 'image/x-icon';
+        if ($faviconExt === 'png') $faviconType = 'image/png';
+        elseif ($faviconExt === 'svg') $faviconType = 'image/svg+xml';
+        elseif ($faviconExt === 'webp') $faviconType = 'image/webp';
+        elseif (in_array($faviconExt, ['jpg', 'jpeg'])) $faviconType = 'image/jpeg';
     @endphp
-    <link rel="icon" href="{{ $faviconUrl }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ $faviconUrl }}" type="image/x-icon">
+    <link rel="icon" href="{{ $faviconUrl }}" type="{{ $faviconType }}">
+    <link rel="shortcut icon" href="{{ $faviconUrl }}" type="{{ $faviconType }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
     <style>

@@ -18,8 +18,7 @@
     @endphp
 <link rel="icon" href="{{ $faviconUrl }}" type="{{ $faviconType }}">
 <link rel="apple-touch-icon" href="{{ $faviconUrl }}">
-{{-- Tambah ini --}}
-<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="{{ $faviconUrl }}" type="{{ $faviconType }}">
 
     {{-- Google Fonts Preconnect & Montserrat (PAGESPEED OPTIMIZED: Asynchronous Non-Blocking Style Loading) --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">

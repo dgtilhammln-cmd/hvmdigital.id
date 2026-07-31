@@ -40,11 +40,11 @@ class SettingController extends Controller
         foreach ($request->allFiles() as $key => $file) {
             // Validate it's an image
             if (!in_array($file->getMimeType(), [
-                'image/jpeg','image/png','image/gif','image/webp','image/svg+xml'
+                'image/jpeg','image/png','image/gif','image/webp','image/svg+xml','image/x-icon','image/vnd.microsoft.icon'
             ])) {
                 continue;
             }
-            if ($key === 'og_image_default') {
+            if ($key === 'og_image_default' || $key === 'favicon') {
                 $result = $this->imageService->uploadOriginal($file, 'settings');
             } else {
                 $result = $this->imageService->uploadAndConvert($file, 'settings');
