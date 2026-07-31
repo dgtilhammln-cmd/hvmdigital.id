@@ -39,7 +39,7 @@ class UserAuthController extends Controller
         // Auto-create tenant in onboarding state
         Tenant::create([
             'user_id'       => $user->id,
-            'business_name' => $validated['name'] . "'s Business",
+            'business_name' => $validated['name'],
             'slug'          => Str::slug($validated['name']) . '-' . Str::random(4),
             'whatsapp'      => $validated['phone'],
             'status'        => 'onboarding',
