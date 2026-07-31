@@ -135,39 +135,11 @@ class SitemapController extends Controller
 
         $content = <<<ROBOTS
 # ==========================================
-# HVM DIGITAL - ADVANCED ROBOTS.TXT
-# Optimized for Search Engines & AI Bots
+# HVM DIGITAL - ROBOTS.TXT
 # ==========================================
 
 # ------------------------------------------
-# 1. ALLOWED AI BOTS & SEARCH ENGINES
-# ------------------------------------------
-User-agent: GPTBot
-User-agent: ChatGPT-User
-User-agent: Google-Extended
-User-agent: Claude-Web
-User-agent: ClaudeBot
-User-agent: PerplexityBot
-User-agent: OAI-SearchBot
-User-agent: Applebot-Extended
-User-agent: Googlebot
-User-agent: Bingbot
-User-agent: DuckDuckBot
-User-agent: Applebot
-User-agent: Slurp
-User-agent: YandexBot
-Allow: /
-Disallow: /admin/
-Disallow: /login/
-Disallow: /register/
-Disallow: /api/
-Disallow: /storage/
-Disallow: /*.json$
-Disallow: /*.sql$
-Disallow: /*.env$
-
-# ------------------------------------------
-# 2. BLOCKED AGGRESSIVE & MALICIOUS BOTS
+# 1. BLOCKED AGGRESSIVE & MALICIOUS BOTS
 # ------------------------------------------
 User-agent: Bytespider
 User-agent: CCBot
@@ -191,21 +163,18 @@ User-agent: magpie-crawler
 Disallow: /
 
 # ------------------------------------------
-# 3. GLOBAL DEFAULT RULE
+# 2. GLOBAL DEFAULT RULE
 # ------------------------------------------
 User-agent: *
 Allow: /
 Disallow: /admin/
-Disallow: /login/
-Disallow: /register/
 Disallow: /api/
-Disallow: /storage/
 Disallow: /*.json$
 Disallow: /*.sql$
 Disallow: /*.env$
 
 # ------------------------------------------
-# 4. SITEMAP LOCATION
+# 3. SITEMAP LOCATION
 # ------------------------------------------
 Sitemap: {$sitemapUrl}
 ROBOTS;
