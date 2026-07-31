@@ -6,9 +6,9 @@
             {{-- Header & Progress --}}
             <div class="flex flex-col md:flex-row items-center justify-between mb-8 gap-6">
                 <div class="text-center md:text-left">
-                    <a href="{{ route('home') }}" class="inline-flex items-center gap-2 mb-2 group">
-                        @php $logoUrl = setting('favicon') ? get_image_url(setting('favicon')) : asset('images/logohvm.png'); @endphp
-                        <img src="{{ $logoUrl }}" alt="HVM Digital" class="w-12 h-12 rounded-lg shadow bg-white p-1">
+                    <a href="{{ route('home') }}" class="inline-flex items-center mb-4 group">
+                        @php $logoUrl = setting('logo_white') ? get_image_url(setting('logo_white')) : (setting('logo') ? get_image_url(setting('logo')) : asset('images/logohvm.png')); @endphp
+                        <img src="{{ $logoUrl }}" alt="HVM Digital" class="h-10 w-auto">
                     </a>
                     <h1 class="text-2xl font-bold text-fg">Setup Website Anda</h1>
                     <p class="text-muted text-sm font-light">Lengkapi 2 langkah mudah ini.</p>
@@ -116,10 +116,9 @@
                                         <select x-model="form.business_type"
                                             class="w-full px-4 py-2.5 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:outline-none focus:ring-2 focus:ring-[#9acb03]/50 focus:border-[#9acb03] transition-all">
                                             <option value="">Pilih kategori...</option>
-                                            <option value="fnb">Kuliner (F&B)</option>
-                                            <option value="retail">Retail / Toko</option>
-                                            <option value="jasa">Jasa & Layanan</option>
-                                            <option value="lainnya">Lainnya</option>
+                                            <option value="umkm">UMKM (Usaha Mikro, Kecil, Menengah)</option>
+                                            <option value="b2c">B2C (Business to Consumer)</option>
+                                            <option value="b2b">B2B (Business to Business)</option>
                                         </select>
                                     </div>
                                 </div>
@@ -172,7 +171,11 @@
                                                 <span x-text="locating ? 'Mencari...' : 'Auto Lokasi'"></span>
                                             </button>
                                         </div>
-                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                                        <textarea x-model="form.address" rows="2"
+                                            class="w-full px-4 py-2.5 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:outline-none focus:ring-2 focus:ring-[#9acb03]/50 focus:border-[#9acb03] transition-all mb-3"
+                                            placeholder="Detail Jalan (Cth: Jl. Raya Mawar No. 10, RT 01/02)"></textarea>
+                                            
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
                                             <select x-model="t_prov" @change="fetchRegencies()"
                                                 class="w-full px-3 py-2 rounded-xl border border-theme bg-surface dark:bg-[#0d1f15] text-fg text-sm focus:ring-[#9acb03]/50 focus:border-[#9acb03]">
                                                 <option value="">Pilih Provinsi...</option>
@@ -203,8 +206,8 @@
                                             </select>
                                         </div>
                                         <input type="text" x-model="form.city" readonly
-                                            class="w-full px-4 py-2.5 rounded-xl border border-theme bg-gray-50 dark:bg-[#0a150e] text-muted text-sm cursor-not-allowed"
-                                            placeholder="Alamat lengkap otomatis terisi...">
+                                            class="w-full px-4 py-2.5 rounded-xl border border-theme bg-[#075749]/10 dark:bg-[#0d1f15] text-muted text-sm cursor-not-allowed"
+                                            placeholder="Wilayah lengkap otomatis terisi...">
                                     </div>
                                 </div>
                             </div>
@@ -423,9 +426,10 @@
                     form: {
                         business_name: '',
                         slug: '',
-                        business_type: '{{ $tenant->business_type ?? '' }}',
-                        whatsapp: '{{ $tenant->whatsapp ?? '' }}',
-                        city: '{{ $tenant->city ?? '' }}',
+                        business_type: '{{ $tenant->business_type ?? "" }}',
+                        whatsapp: '{{ $tenant->whatsapp ?? "" }}',
+                        address: '{{ $tenant->address ?? "" }}',
+                        city: '{{ $tenant->city ?? "" }}',
                         domain_type: '{{ ($tenant->plan ?? "free") === "pro" ? "custom" : "free" }}',
                         domain_name: '',
                     },
@@ -503,7 +507,7 @@
                             this.locating = false;
                         }, (err) => {
                             this.locating = false;
-                            this.showAlert('Izin lokasi ditolak atau gagal', 'error');
+                            console.log('Izin lokasi ditolak atau gagal.');
                         });
                     },
 
