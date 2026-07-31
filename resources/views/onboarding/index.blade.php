@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @section('content')
 <section class="min-h-screen py-16 px-4 relative overflow-hidden bg-surface dark:bg-[#061009]" x-data="onboardingWizard()">
