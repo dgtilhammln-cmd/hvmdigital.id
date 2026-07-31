@@ -8,7 +8,7 @@
 <div class="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
     <div>
         <h2 class="text-2xl font-bold text-fg mb-1">Selamat datang, {{ Auth::user()->name }}!</h2>
-        <p class="text-muted text-sm">Ini adalah pusat kendali untuk bisnis <strong class="text-[#9acb03]">{{ $tenant->business_name }}</strong> Anda.</p>
+        <p class="text-muted text-sm">Ini adalah pusat kendali untuk bisnis <strong class="text-[#9acb03]">{!! $tenant->business_name !!}</strong> Anda.</p>
     </div>
     
     <div class="flex items-center gap-3">
