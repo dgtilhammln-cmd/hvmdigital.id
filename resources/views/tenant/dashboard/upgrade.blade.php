@@ -98,15 +98,15 @@
                      :style="primaryResult.available ? 'border-color:#9acb03;background:linear-gradient(135deg,rgba(154,203,3,0.04) 0%,#fff 60%);' : 'border-color:#fca5a5;background:#fff;'">
                     
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-                        <span style="padding:3px 12px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;"
-                              :style="primaryResult.available ? 'background:#dcfce7;color:#15803d;' : 'background:#fee2e2;color:#dc2626;'"
-                              x-text="primaryResult.available ? '✓ Sesuai Permintaan' : '✗ Tidak Tersedia'"></span>
-                        <span x-show="!primaryResult.available" style="font-size:11px;font-weight:300;color:#9ca3af;">— cek alternatif di bawah</span>
+                        <span style="font-size:11px;font-weight:500;letter-spacing:0.02em;"
+                              :style="primaryResult.available ? 'color:#15803d;' : 'color:#ef4444;'"
+                              x-text="primaryResult.available ? '✓ Sesuai Permintaan' : '· Tidak tersedia'"></span>
+                        <span x-show="!primaryResult.available" style="font-size:11px;font-weight:300;color:#d1d5db;">— cek alternatif di bawah</span>
                     </div>
 
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
                         <div>
-                            <div style="font-size:22px;font-weight:800;color:#111827;letter-spacing:-0.5px;" x-text="primaryResult.domain"></div>
+                            <div style="font-size:18px;font-weight:700;color:#111827;letter-spacing:-0.3px;" x-text="primaryResult.domain"></div>
                             <div x-show="primaryResult.available" style="margin-top:6px;display:flex;flex-direction:column;gap:3px;">
                                 <span style="font-size:12px;font-weight:300;color:#6b7280;display:flex;align-items:center;gap:5px;"><svg style="width:13px;height:13px;color:#9acb03;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Domain profesional untuk bisnis Anda</span>
                                 <span style="font-size:12px;font-weight:300;color:#6b7280;display:flex;align-items:center;gap:5px;"><svg style="width:13px;height:13px;color:#9acb03;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Tingkatkan kepercayaan pelanggan Anda</span>
@@ -116,7 +116,7 @@
                         <div x-show="primaryResult.available" style="display:flex;align-items:center;gap:18px;flex-shrink:0;">
                             <div style="text-align:right;">
                                 <div style="font-size:11px;font-weight:300;color:#d1d5db;text-decoration:line-through;" x-text="'Rp ' + Math.round(primaryResult.price.base * 2.5).toLocaleString('id-ID') + ' /Tahun'"></div>
-                                <div style="font-size:22px;font-weight:800;color:#075749;" x-text="primaryResult.price.total_formatted"></div>
+                                <div style="font-size:20px;font-weight:700;color:#075749;" x-text="primaryResult.price.total_formatted"></div>
                                 <div style="font-size:10px;font-weight:300;color:#9ca3af;">incl. PPN 11%</div>
                             </div>
                             <button @click="selectAndProceed(primaryResult)"
@@ -133,19 +133,19 @@
             {{-- Other TLDs - COMPACT LIST --}}
             <div x-show="otherResults.length > 0" style="background:#fff;border-radius:14px;border:1.5px solid #e5e7eb;overflow:hidden;">
                 {{-- Header + Filter --}}
-                <div style="padding:14px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-                    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+                <div style="padding:14px 20px;border-bottom:1px solid #f0f0f0;">
+                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                         <span style="font-size:13px;font-weight:700;color:#111827;">Pilihan domain lainnya</span>
                         <div style="display:flex;gap:6px;">
                             <template x-for="cat in ['Semua','Tersedia','Populer','Hemat']" :key="cat">
                                 <button @click="activeFilter=cat"
-                                        style="padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all 0.15s;font-family:'Montserrat',sans-serif;"
-                                        :style="activeFilter===cat ? 'background:#0d1f15;color:#9acb03;border-color:#0d1f15;' : 'background:#fff;color:#6b7280;border-color:#e5e7eb;'"
+                                        style="padding:3px 11px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid;transition:all 0.15s;font-family:'Montserrat',sans-serif;letter-spacing:0.1px;"
+                                        :style="activeFilter===cat ? 'background:#111827;color:#fff;border-color:#111827;' : 'background:transparent;color:#9ca3af;border-color:transparent;'"
                                         x-text="cat"></button>
                             </template>
                         </div>
+                        <span style="font-size:11px;font-weight:300;color:#9ca3af;margin-left:auto;" x-text="filteredResults.length + ' domain'"></span>
                     </div>
-                    <span style="font-size:11px;font-weight:300;color:#9ca3af;" x-text="filteredResults.length + ' domain'"></span>
                 </div>
 
                 {{-- Compact Rows --}}
@@ -162,13 +162,13 @@
 
                         {{-- Price + Button (available) --}}
                         <template x-if="result.available">
-                            <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
-                                <div style="text-align:right;line-height:1.2;">
+                            <div x-show="result.available" style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
+                                <div style="text-align:right;line-height:1.3;">
                                     <div style="font-size:10px;font-weight:300;color:#d1d5db;text-decoration:line-through;" x-text="'Rp ' + Math.round(result.price.base * 2.5).toLocaleString('id-ID')"></div>
-                                    <div style="font-size:14px;font-weight:800;color:#111827;" x-text="result.price.total_formatted"></div>
+                                    <div style="font-size:13px;font-weight:500;color:#374151;" x-text="result.price.total_formatted"></div>
                                 </div>
                                 <button @click="selectAndProceed(result)"
-                                        style="padding:7px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid #075749;color:#075749;background:#fff;font-family:'Montserrat',sans-serif;transition:all 0.15s;white-space:nowrap;"
+                                        style="padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #075749;color:#075749;background:#fff;font-family:'Montserrat',sans-serif;transition:all 0.15s;white-space:nowrap;"
                                         @mouseover="$el.style.background='#075749';$el.style.color='#fff'"
                                         @mouseout="$el.style.background='#fff';$el.style.color='#075749'">
                                     Pilih
@@ -178,7 +178,7 @@
 
                         {{-- Not available --}}
                         <template x-if="!result.available">
-                            <span style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#dc2626;flex-shrink:0;">Tidak Tersedia</span>
+                            <span style="font-size:11px;font-weight:400;color:#d1d5db;flex-shrink:0;">tidak tersedia</span>
                         </template>
                     </div>
                 </template>
