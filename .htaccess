@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # --- ATURAN KEAMANAN MUTLAK (MENCEGAH AKSES FILE SENSITIF) ---
+    RewriteRule ^(\.env|composer\.(json|lock)|package\.(json|lock)|artisan|\.gitignore)$ - [F,L,NC]
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage/logs|storage/framework|storage/app/private|tests|vendor)/ - [F,L,NC]
+
+    # --- PENGALIHAN OTOMATIS KE FOLDER PUBLIC (TANPA UBAH STRUKTUR) ---
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
