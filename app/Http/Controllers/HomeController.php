@@ -30,13 +30,18 @@ class HomeController extends Controller
             'description' => setting('home_meta_description', 'HVM Digital adalah agensi One-Stop Solution Digital Marketing & IT Solution di Surabaya. Website, SEO, Iklan Digital, dan Aplikasi Custom untuk bisnis Anda.'),
             'keywords'    => setting('home_meta_keywords', 'digital marketing surabaya, jasa website surabaya, IT solution surabaya, agensi digital surabaya, HVM Digital'),
             'schemas'     => [
-                $this->schema->organization(),
-                $this->schema->website(),
-                $this->schema->defaultLocalBusiness(),
-                $this->schema->bekasiBranchLocalBusiness(),
-                $this->schema->breadcrumb([
-                    ['name' => 'Home', 'url' => url('/')],
-                ]),
+                $this->schema->website(),                               // WebSite + SearchAction
+                $this->schema->organization(),                          // Organization (@id anchored, AggregateRating)
+                $this->schema->defaultLocalBusiness($testimonials),     // HQ LocalBusiness + Reviews dari DB
+                $this->schema->bekasiBranchLocalBusiness($testimonials),// Bekasi Branch
+                $this->schema->websiteProduct('Surabaya'),              // Product: harga low/high, offerCount
+                $this->schema->webPage(                                 // WebPage: @id, isPartOf, breadcrumb
+                    url('/'),
+                    setting('home_meta_title', 'HVM Digital — Digital Marketing & IT Solution'),
+                    setting('home_meta_description', 'Agensi Digital Marketing & IT Solution terpercaya di Surabaya.'),
+                    [['name' => 'Home', 'url' => url('/')]]
+                ),
+                $this->schema->breadcrumb([['name' => 'Home', 'url' => url('/')]]),
             ],
         ]);
 

@@ -4,7 +4,7 @@
     // Force canonical ke domain produksi agar Google tidak melihat URL localhost
     $_currentUrl = $seo['canonical'] ?? url()->current();
     if (str_contains($_currentUrl, 'localhost') || str_contains($_currentUrl, '127.0.0.1')) {
-        $_currentUrl = preg_replace('#https?://[^/]+(/public_html/public)?#', 'https://hvmdigital.id', $_currentUrl);
+        $_currentUrl = preg_replace('#https?://[^/]+(/public_html/public)?#', 'https://hvm-digital.id', $_currentUrl);
     }
     $_canonicalUrl = rtrim($_currentUrl, '/');
 @endphp
@@ -57,7 +57,7 @@ $_ogMime = match($_ogExt) { 'png' => 'image/png', 'jpg','jpeg' => 'image/jpeg', 
 <meta name="twitter:description" content="{{ $seo['twitter_description'] ?? ($seo['description'] ?? '') }}">
 <meta name="twitter:image" content="{{ $seo['twitter_image'] ?? ($seo['og_image'] ?? asset('images/logohvm.png')) }}">
 <meta name="twitter:image:alt" content="{{ $seo['og_title'] ?? ($seo['title'] ?? config('hvm.name')) }}">
-<meta name="twitter:domain" content="{{ parse_url(config('app.url'), PHP_URL_HOST) === 'localhost' ? 'hvmdigital.id' : parse_url(config('app.url'), PHP_URL_HOST) }}">
+<meta name="twitter:domain" content="{{ parse_url(config('app.url'), PHP_URL_HOST) === 'localhost' ? 'hvm-digital.id' : parse_url(config('app.url'), PHP_URL_HOST) }}">
 
 {{-- === JSON-LD SCHEMAS === --}}
 @if(!empty($seo['schemas']))

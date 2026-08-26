@@ -120,7 +120,7 @@ class SeoService
 
             // Twitter Card
             'twitter_card'        => 'summary_large_image',
-            'twitter_domain'      => parse_url(config('app.url'), PHP_URL_HOST) ?? 'hvmdigital.id',
+            'twitter_domain'      => parse_url(config('app.url'), PHP_URL_HOST) ?? 'hvm-digital.id',
             'twitter_title'       => $data['title'] ?? $siteName,
             'twitter_description' => $data['description'] ?? '',
             'twitter_image'       => $ogImage,
@@ -143,17 +143,23 @@ class SeoService
     public function forCity(array $cityConfig, array $landingData = []): array
     {
         $schemas = [
+            $this->schema->website(),
             $this->schema->organization(),
-            $this->schema->localBusiness($cityConfig['name'], $cityConfig),
+            $this->schema->localBusiness($cityConfig['name'], $cityConfig, $landingData['testimonials'] ?? null),
             $this->schema->breadcrumb([
-                ['name' => 'Home', 'url' => url('/')],
+                ['name' => 'Home',    'url' => url('/')],
                 ['name' => 'Layanan', 'url' => route('services')],
-                ['name' => 'Jasa Website ' . $cityConfig['name'], 'url' => url()->current()],
+                ['name' => 'Jasa Website ' . $cityConfig['name'], 'url' => $landingData['canonical'] ?? url()->current()],
             ]),
         ];
 
         if (!empty($landingData['faqs'])) {
             $schemas[] = $this->schema->faq($landingData['faqs']);
+        }
+
+        // Merge extra schemas dari controller (Product, WebPage, dll)
+        if (!empty($landingData['extra_schemas'])) {
+            $schemas = array_merge($schemas, $landingData['extra_schemas']);
         }
 
         // Hanya Surabaya & Lamongan yang di-index oleh Google
