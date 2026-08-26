@@ -115,4 +115,13 @@
         </div>
     </div>
 </section>
+@push('scripts')
+<style>
+/* Hide default Edge/IE password reveal icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+</style>
+@endpush
 @endsection
