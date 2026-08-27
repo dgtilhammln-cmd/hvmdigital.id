@@ -9,6 +9,7 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\MegpreneurController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SettingController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\PageManagementController;
+use App\Http\Controllers\Admin\MegpreneurController as AdminMegpreneurController;
 
 // ========================================
 // PUBLIC ROUTES
@@ -237,6 +239,16 @@ Route::get('/run-rename-images-secret', function() {
     ]);
 });
 
+// ========================================
+// MEGPRENEUR 2026 — EVENT ROUTES
+// ========================================
+Route::get('/megpreneur', [MegpreneurController::class, 'index'])->name('megpreneur.index');
+Route::get('/megpreneur/form', [MegpreneurController::class, 'showForm'])->name('megpreneur.form');
+Route::post('/megpreneur/form', [MegpreneurController::class, 'submitForm'])->name('megpreneur.submit');
+Route::get('/megpreneur/sukses', [MegpreneurController::class, 'success'])->name('megpreneur.success');
+Route::get('/megpreneur/api/status', [MegpreneurController::class, 'apiStatus'])->name('megpreneur.api.status');
+Route::get('/megpreneur/api/reveal', [MegpreneurController::class, 'apiRevealWinners'])->name('megpreneur.api.reveal');
+
 // Layanan / Services
 Route::get('/layanan/jasa-optimasi-seo-halaman-1', [ServiceController::class, 'seoPage'])->name('services.seo');
 Route::get('/layanan', [ServiceController::class, 'index'])->name('services');
@@ -377,6 +389,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/seo/opengraph', [SeoController::class, 'storeOpengraph'])->name('seo.opengraph.store');
             Route::put('/seo/opengraph/{id}', [SeoController::class, 'updateOpengraph'])->name('seo.opengraph.update');
             Route::delete('/seo/opengraph/{id}', [SeoController::class, 'destroyOpengraph'])->name('seo.opengraph.destroy');
+
+            // ========================================
+            // MEGPRENEUR 2026 — ADMIN PANEL
+            // ========================================
+            Route::get('/megpreneur', [AdminMegpreneurController::class, 'index'])->name('megpreneur.index');
+            Route::get('/megpreneur/export', [AdminMegpreneurController::class, 'export'])->name('megpreneur.export');
+            Route::post('/megpreneur/set-winners', [AdminMegpreneurController::class, 'setWinners'])->name('megpreneur.set-winners');
+            Route::post('/megpreneur/lock', [AdminMegpreneurController::class, 'lockDraw'])->name('megpreneur.lock');
+            Route::post('/megpreneur/activate', [AdminMegpreneurController::class, 'activatePublic'])->name('megpreneur.activate');
+            Route::post('/megpreneur/trigger', [AdminMegpreneurController::class, 'triggerDraw'])->name('megpreneur.trigger');
+            Route::post('/megpreneur/announce', [AdminMegpreneurController::class, 'announceDraw'])->name('megpreneur.announce');
+            Route::post('/megpreneur/reset', [AdminMegpreneurController::class, 'resetDraw'])->name('megpreneur.reset');
+            Route::post('/megpreneur/{id}/toggle-valid', [AdminMegpreneurController::class, 'toggleValid'])->name('megpreneur.toggle-valid');
+            Route::delete('/megpreneur/{id}', [AdminMegpreneurController::class, 'destroyParticipant'])->name('megpreneur.destroy');
         });
     });
 });
