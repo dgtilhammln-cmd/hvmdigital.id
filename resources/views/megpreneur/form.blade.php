@@ -355,7 +355,7 @@
               </div>
               <h2 class="text-white font-bold text-lg">Foto Selfie di Booth HVM Digital</h2>
             </div>
-            <p class="text-white/40 text-sm mb-5 -mt-2">Ambil foto selfie di booth kami sendiri atau bersama tim HVM Digital. Gunakan kamera langsung atau upload (Maks 5MB).</p>
+            <p class="text-white/40 text-sm mb-5 -mt-2">Ambil foto selfie di booth kami sendiri atau bersama tim HVM Digital. Gunakan kamera langsung atau upload (Maks 6MB).</p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div class="md:col-span-2">
