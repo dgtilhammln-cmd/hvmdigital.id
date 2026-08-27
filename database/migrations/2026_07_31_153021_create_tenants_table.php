@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,7 +14,7 @@ return new class extends Migration
 
             // Identitas Usaha
             $table->string('business_name');
-            $table->string('slug')->unique(); // untuk hvmdigital.id/s/{slug}
+            $table->string('slug')->unique(); // untuk hvm-digital.id/s/{slug}
             $table->string('business_type')->nullable();       // F&B, Fashion, Jasa, dll
             $table->string('business_category')->nullable();   // sub-kategori
             $table->text('description')->nullable();

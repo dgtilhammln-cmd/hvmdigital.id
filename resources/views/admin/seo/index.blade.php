@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+﻿@extends('admin.layouts.app')
 @section('title', 'SEO Per Halaman')
 @section('content')
 <div class="p-6 lg:p-8">
@@ -89,7 +89,7 @@
                 <div class="mt-5 p-4 bg-white/5 rounded-xl border border-white/5">
                     <p class="text-white/30 text-xs mb-2 uppercase tracking-wider font-medium">Preview Google</p>
                     <p class="text-blue-400 text-sm font-medium truncate">{{ setting($key.'_meta_title') }}</p>
-                    <p class="text-green-400 text-xs mt-0.5">https://hvmdigital.id/{{ $key === 'home' ? '' : $key }}</p>
+                    <p class="text-green-400 text-xs mt-0.5">https://hvm-digital.id/{{ $key === 'home' ? '' : $key }}</p>
                     <p class="text-white/50 text-xs mt-1 line-clamp-2">{{ setting($key.'_meta_description') }}</p>
                 </div>
                 @endif

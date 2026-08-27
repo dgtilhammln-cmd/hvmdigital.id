@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -19,7 +19,7 @@ class SitemapController extends Controller
 
         // Jika APP_URL masih localhost, override ke domain produksi
         if (str_contains($base, 'localhost') || str_contains($base, '127.0.0.1')) {
-            $base = 'https://hvmdigital.id';
+            $base = 'https://hvm-digital.id';
         }
 
         return $base . '/' . ltrim($path, '/');
@@ -139,37 +139,24 @@ class SitemapController extends Controller
 # ==========================================
 
 # ------------------------------------------
-# 1. BLOCKED AGGRESSIVE & MALICIOUS BOTS
+# 2. SEO TOOLS — DIIZINKAN CRAWL
 # ------------------------------------------
-User-agent: Bytespider
-User-agent: CCBot
-User-agent: Diffbot
-User-agent: Omgilibot
-User-agent: Omgili
-User-agent: Barkrowler
-User-agent: BLEXBot
-User-agent: DataForSeoBot
 User-agent: SemrushBot
+Allow: /
+
 User-agent: AhrefsBot
-User-agent: MJ12bot
-User-agent: DotBot
-User-agent: Rogerbot
-User-agent: MegaIndex.ru
+Allow: /
+
 User-agent: PetalBot
-User-agent: MauiBot
-User-agent: ZoominfoBot
-User-agent: MetaExternalAgent
-User-agent: magpie-crawler
-Disallow: /
+Allow: /
 
 # ------------------------------------------
-# 2. GLOBAL DEFAULT RULE
+# 3. GLOBAL DEFAULT RULE
 # ------------------------------------------
 User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
-Disallow: /*.json$
 Disallow: /*.sql$
 Disallow: /*.env$
 

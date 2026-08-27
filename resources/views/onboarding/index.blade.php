@@ -1,4 +1,4 @@
-@extends('layouts.auth')
+﻿@extends('layouts.auth')
 
 @push('head')
     @php
@@ -300,7 +300,7 @@
                                 <div class="flex items-stretch mb-2">
                                     <span
                                         class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-theme bg-[#0d1f15] text-muted text-sm select-none">
-                                        hvmdigital.id/s/
+                                        hvm-digital.id/s/
                                     </span>
                                     <input type="text" x-model="form.slug" required
                                         @input="form.slug = form.slug.toLowerCase().replace(/[^a-z0-9\-]/g, '')"

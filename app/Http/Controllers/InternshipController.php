@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -40,8 +40,8 @@ class InternshipController extends Controller
                 'hiringOrganization' => [
                     '@type' => 'Organization',
                     'name' => 'HVM Digital',
-                    'sameAs' => 'https://hvmdigital.id',
-                    'logo' => 'https://hvmdigital.id/images/logo.webp'
+                    'sameAs' => 'https://hvm-digital.id',
+                    'logo' => 'https://hvm-digital.id/images/logo.webp'
                 ],
                 'jobLocation' => [
                     '@type' => 'Place',

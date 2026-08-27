@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', 'Leads CRM')
 @section('page-title', 'Leads CRM')
 @section('page-subtitle', 'Kelola prospek, status, follow-up, dan assign agent.')
@@ -236,7 +236,7 @@
                             <a href="{{ $lead->source_url }}" target="_blank"
                                style="color:#2563eb;text-decoration:none;display:inline-flex;align-items:center;gap:3px;" title="{{ $lead->source_url }}">
                                 <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                                {{ str_replace(['http://','https://','hvmdigital.id'], '', $lead->source_url) ?: '/' }}
+                                {{ str_replace(['http://','https://','hvm-digital.id'], '', $lead->source_url) ?: '/' }}
                             </a>
                         @else
                             <span style="color:#d1d5db;">—</span>

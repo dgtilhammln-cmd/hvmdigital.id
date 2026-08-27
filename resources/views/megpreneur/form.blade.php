@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Peserta — Megpreneur 2026 | HVM Digital')
-@section('meta_description', 'Daftarkan usaha Anda untuk event Megpreneur 2026 oleh HVM Digital. Isi form, follow sosial media kami, dan menangkan hadiah menarik!')
+@section('title', 'Giveaway Booth HVM Digital - Megpreneur 2026')
+@section('meta_description', 'Kunjungi booth HVM Digital di Megpreneur 2026! Isi form, follow akun kami, dan menangkan hadiah spesial.')
 
 @push('head')
-<meta property="og:title" content="Megpreneur 2026 — Form Pendaftaran">
-<meta property="og:description" content="Daftarkan usaha Anda untuk mengikuti undian Megpreneur 2026 by HVM Digital.">
+<meta property="og:title" content="Giveaway Booth HVM Digital - Megpreneur 2026">
+<meta property="og:description" content="Kunjungi booth HVM Digital di Megpreneur 2026, ikuti undiannya dan menangkan hadiah menarik!">
 <meta property="og:url" content="{{ url('/megpreneur/form') }}">
 <style>
   .mgp-hero {
@@ -150,15 +150,13 @@
 
     {{-- Header --}}
     <div class="text-center mb-12">
-      <div class="inline-flex items-center gap-2 bg-[#9acb03]/15 border border-[#9acb03]/30 rounded-full px-5 py-2 mb-6">
-        <span class="w-2 h-2 bg-[#9acb03] rounded-full animate-pulse"></span>
-        <span class="text-[#9acb03] text-sm font-semibold tracking-wide">EVENT PENDAFTARAN DIBUKA</span>
-      </div>
-      <h1 class="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
-        Daftar <span class="text-[#9acb03]">Megpreneur</span><br class="md:hidden"> 2026
+      <h1 class="text-3xl md:text-5xl font-black text-white mb-4 leading-tight">
+        Giveaway Booth<br class="md:hidden">
+        <span class="text-[#9acb03]">HVM Digital</span>
       </h1>
+      <p class="text-[#9acb03]/80 font-bold tracking-widest uppercase mb-4">@ Megpreneur 2026</p>
       <p class="text-white/60 text-base max-w-xl mx-auto leading-relaxed">
-        Isi form di bawah ini, follow akun sosial media HVM Digital, dan berkesempatan memenangkan hadiah menarik!
+        Kunjungi booth kami, isi form di bawah ini, follow akun sosial media HVM Digital, dan dapatkan kesempatan memenangkan hadiah spesial!
       </p>
     </div>
 
@@ -256,17 +254,17 @@
                 <select name="bidang_sektor" id="bidang_sektor"
                   class="mgp-input @error('bidang_sektor') border-red-500/60 @enderror" required>
                   <option value="" disabled {{ old('bidang_sektor') ? '' : 'selected' }}>-- Pilih Bidang --</option>
-                  <option value="Kuliner" {{ old('bidang_sektor')=='Kuliner' ? 'selected' : '' }}>🍴 Kuliner & F&B</option>
-                  <option value="Jasa" {{ old('bidang_sektor')=='Jasa' ? 'selected' : '' }}>🔧 Jasa & Servis</option>
-                  <option value="Retail" {{ old('bidang_sektor')=='Retail' ? 'selected' : '' }}>🛍️ Retail & Toko</option>
-                  <option value="Fashion" {{ old('bidang_sektor')=='Fashion' ? 'selected' : '' }}>👗 Fashion & Pakaian</option>
-                  <option value="Kecantikan" {{ old('bidang_sektor')=='Kecantikan' ? 'selected' : '' }}>💄 Kecantikan & Beauty</option>
-                  <option value="Teknologi" {{ old('bidang_sektor')=='Teknologi' ? 'selected' : '' }}>💻 Teknologi & Digital</option>
-                  <option value="Pendidikan" {{ old('bidang_sektor')=='Pendidikan' ? 'selected' : '' }}>📚 Pendidikan & Kursus</option>
-                  <option value="Kesehatan" {{ old('bidang_sektor')=='Kesehatan' ? 'selected' : '' }}>🏥 Kesehatan & Wellness</option>
-                  <option value="Properti" {{ old('bidang_sektor')=='Properti' ? 'selected' : '' }}>🏠 Properti & Dekorasi</option>
-                  <option value="Pertanian" {{ old('bidang_sektor')=='Pertanian' ? 'selected' : '' }}>🌱 Pertanian & Agribisnis</option>
-                  <option value="Lainnya" {{ old('bidang_sektor')=='Lainnya' ? 'selected' : '' }}>📦 Lainnya</option>
+                  <option value="Kuliner" {{ old('bidang_sektor')=='Kuliner' ? 'selected' : '' }}>Kuliner & F&B</option>
+                  <option value="Jasa" {{ old('bidang_sektor')=='Jasa' ? 'selected' : '' }}>Jasa & Servis</option>
+                  <option value="Retail" {{ old('bidang_sektor')=='Retail' ? 'selected' : '' }}>Retail & Toko</option>
+                  <option value="Fashion" {{ old('bidang_sektor')=='Fashion' ? 'selected' : '' }}>Fashion & Pakaian</option>
+                  <option value="Kecantikan" {{ old('bidang_sektor')=='Kecantikan' ? 'selected' : '' }}>Kecantikan & Beauty</option>
+                  <option value="Teknologi" {{ old('bidang_sektor')=='Teknologi' ? 'selected' : '' }}>Teknologi & Digital</option>
+                  <option value="Pendidikan" {{ old('bidang_sektor')=='Pendidikan' ? 'selected' : '' }}>Pendidikan & Kursus</option>
+                  <option value="Kesehatan" {{ old('bidang_sektor')=='Kesehatan' ? 'selected' : '' }}>Kesehatan & Wellness</option>
+                  <option value="Properti" {{ old('bidang_sektor')=='Properti' ? 'selected' : '' }}>Properti & Dekorasi</option>
+                  <option value="Pertanian" {{ old('bidang_sektor')=='Pertanian' ? 'selected' : '' }}>Pertanian & Agribisnis</option>
+                  <option value="Lainnya" {{ old('bidang_sektor')=='Lainnya' ? 'selected' : '' }}>Lainnya</option>
                 </select>
                 @error('bidang_sektor')
                 <p class="error-msg"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>{{ $message }}</p>
@@ -349,13 +347,48 @@
             </div>
           </div>
 
-          {{-- Section 3: Konfirmasi --}}
+          {{-- Section 3: Foto Selfie Booth --}}
           <div class="mb-8">
             <div class="flex items-center gap-3 mb-6">
               <div class="w-8 h-8 bg-[#9acb03]/20 rounded-xl flex items-center justify-center">
                 <span class="text-[#9acb03] font-black text-sm">3</span>
               </div>
-              <h2 class="text-white font-bold text-lg">Konfirmasi Kunjungan</h2>
+              <h2 class="text-white font-bold text-lg">Foto Selfie di Booth HVM Digital</h2>
+            </div>
+            <p class="text-white/40 text-sm mb-5 -mt-2">Ambil foto selfie di booth kami sendiri atau bersama tim HVM Digital. Gunakan kamera langsung atau upload (Maks 5MB).</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div class="md:col-span-2">
+                <label class="mgp-label">Foto Selfie Booth <span class="req">*</span></label>
+                <div class="upload-zone @error('foto_selfie_booth') border-red-500/60 @enderror"
+                     id="zone-selfie" onclick="document.getElementById('foto_selfie_booth').click()"
+                     ondragover="handleDrag(event,'selfie')" ondrop="handleDrop(event,'selfie')" ondragleave="this.classList.remove('drag-over')">
+                  <img id="preview-selfie" class="preview-img" src="" alt="Preview Selfie">
+                  <div class="upload-placeholder" id="placeholder-selfie">
+                    <div class="w-12 h-12 mx-auto mb-3 bg-[#9acb03]/20 rounded-2xl flex items-center justify-center border border-[#9acb03]/30">
+                      <svg class="w-6 h-6 text-[#9acb03]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                    </div>
+                    <p class="text-white/50 text-sm font-medium mb-1">Gunakan Kamera / Upload Foto</p>
+                    <p class="text-white/25 text-xs">Klik untuk membuka kamera atau galeri</p>
+                  </div>
+                  <input type="file" id="foto_selfie_booth" name="foto_selfie_booth"
+                         accept="image/*" capture="environment" class="hidden"
+                         onchange="previewImage(this, 'selfie')">
+                </div>
+                @error('foto_selfie_booth')
+                <p class="error-msg"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>{{ $message }}</p>
+                @enderror
+              </div>
+            </div>
+          </div>
+
+          {{-- Section 4: Konfirmasi --}}
+          <div class="mb-8">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-8 h-8 bg-[#9acb03]/20 rounded-xl flex items-center justify-center">
+                <span class="text-[#9acb03] font-black text-sm">4</span>
+              </div>
+              <h2 class="text-white font-bold text-lg">Konfirmasi & Submit</h2>
             </div>
 
             {{-- Maps Link --}}
@@ -398,7 +431,7 @@
             <button type="submit" id="btnSubmit" class="btn-submit">
               <span id="btnText" class="flex items-center justify-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Daftar Sekarang — GRATIS!
+                Daftar Sekarang - GRATIS!
               </span>
               <span id="btnLoading" class="hidden items-center justify-center gap-2">
                 <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>

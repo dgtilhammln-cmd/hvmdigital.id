@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace Database\Seeders;
 
@@ -15,7 +15,7 @@ class AdminSeeder extends Seeder
             [
                 'name'       => 'Ilham Maulana',
                 'username'   => 'Ilhammaulana',
-                'email'      => 'admin@hvmdigital.id',
+                'email'      => 'admin@hvm-digital.id',
                 'password'   => Hash::make('Ilhammaulana23'),
                 'is_admin'   => true,
                 'email_verified_at' => now(),

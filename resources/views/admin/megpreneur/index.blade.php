@@ -161,6 +161,16 @@
                         title="Lihat foto follow TikTok">
                   <img src="{{ asset('storage/'.$p->foto_follow_tiktok) }}" alt="TikTok" style="width:100%;height:100%;object-fit:cover;">
                 </button>
+                {{-- Preview Selfie --}}
+                <button type="button" onclick="openPhotoModal('{{ $p->foto_selfie_booth ? asset('storage/'.$p->foto_selfie_booth) : '' }}','Foto Selfie Booth')"
+                        style="width:32px;height:32px;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden;cursor:pointer;padding:0;background:none;flex-shrink:0;{{ !$p->foto_selfie_booth ? 'opacity:0.3;pointer-events:none;' : '' }}"
+                        title="Lihat foto selfie booth">
+                  @if($p->foto_selfie_booth)
+                  <img src="{{ asset('storage/'.$p->foto_selfie_booth) }}" alt="Selfie" style="width:100%;height:100%;object-fit:cover;">
+                  @else
+                  <span style="font-size:10px;color:#9ca3af;">-</span>
+                  @endif
+                </button>
               </div>
             </td>
             <td style="font-size:12px;color:#9ca3af;white-space:nowrap;">{{ $p->created_at->format('d M Y\nH:i') }}</td>
@@ -176,9 +186,9 @@
                 {{-- Toggle valid --}}
                 <form method="POST" action="{{ route('admin.megpreneur.toggle-valid', $p->id) }}">
                   @csrf
-                  <button type="submit" title="{{ $p->is_valid ? 'Set Invalid' : 'Set Valid' }}"
+                  <button type="button" title="{{ $p->is_valid ? 'Set Invalid' : 'Set Valid' }}" onclick="this.form.submit()"
                           style="width:30px;height:30px;border-radius:7px;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;">
-                    {{ $p->is_valid ? '✗' : '✓' }}
+                    {!! $p->is_valid ? '<svg style="width:14px;color:red;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>' : '<svg style="width:14px;color:green;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' !!}
                   </button>
                 </form>
                 {{-- Delete --}}

@@ -1,4 +1,4 @@
-@extends('errors.layout')
+﻿@extends('errors.layout')
 
 @section('title', '419 — Sesi Berakhir')
 @section('description', 'Sesi Anda telah berakhir. Silakan muat ulang halaman.')
@@ -70,7 +70,7 @@
     <div class="container mx-auto px-4 lg:px-8 max-w-2xl text-center">
         <h2 class="text-xl font-bold text-[#0a1f12] dark:text-white mb-3">Butuh Bantuan?</h2>
         <p class="text-gray-500 dark:text-gray-400 text-sm font-light mb-6">Jika masalah ini terus berlanjut, hubungi tim teknis kami langsung via WhatsApp.</p>
-        <a href="{{ function_exists('wa_link') ? wa_link('Halo, saya melihat halaman error 419 di hvmdigital.id') : '#' }}"
+        <a href="{{ function_exists('wa_link') ? wa_link('Halo, saya melihat halaman error 419 di hvm-digital.id') : '#' }}"
            target="_blank" rel="noopener"
            class="inline-flex items-center gap-2.5 font-semibold px-7 py-3.5 rounded-full text-white transition-all hover:scale-105"
            style="background: linear-gradient(135deg, #25d366, #128c7e);">

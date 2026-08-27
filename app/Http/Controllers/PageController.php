@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -41,7 +41,7 @@ class PageController extends Controller
     {
         $seo = $this->seo->forPage('contact', [
             'title'       => setting('contact_meta_title', 'Kontak HVM Digital — Hubungi Kami Sekarang'),
-            'description' => setting('contact_meta_description', 'Hubungi HVM Digital untuk konsultasi gratis. WhatsApp: +62851-7998-2373. Email: bisnis@hvmdigital.id. Kantor Surabaya & Bekasi.'),
+            'description' => setting('contact_meta_description', 'Hubungi HVM Digital untuk konsultasi gratis. WhatsApp: +62851-7998-2373. Email: bisnis@hvm-digital.id. Kantor Surabaya & Bekasi.'),
             'keywords'    => setting('contact_meta_keywords', 'kontak HVM Digital, hubungi HVM Digital, konsultasi website gratis, WhatsApp HVM Digital'),
             'schemas'     => [
                 $this->schema->organization(),

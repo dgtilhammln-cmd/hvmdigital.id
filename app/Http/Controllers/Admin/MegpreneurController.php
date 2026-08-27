@@ -139,7 +139,7 @@ class MegpreneurController extends Controller
     }
 
     /**
-     * POST /admin/megpreneur/announce — Umumkan pemenang (aktifkan API reveal).
+     * POST /admin/megpreneur/announce — Umumkan pemenang.
      */
     public function announceDraw()
     {
@@ -151,28 +151,24 @@ class MegpreneurController extends Controller
 
         $session->update(['status' => 'announced']);
 
-        return back()->with('success', '🏆 Pemenang resmi diumumkan! API reveal sekarang aktif.');
+        return back()->with('success', 'Pemenang resmi diumumkan! API reveal sekarang aktif.');
     }
 
     /**
-     * POST /admin/megpreneur/reset — Reset seluruh sesi undian (hanya super admin).
+     * POST /admin/megpreneur/reset — Reset undian untuk sesi baru
      */
     public function resetDraw()
     {
         $session = MegpreneurDrawSession::current();
         $session->update([
             'status'       => 'draft',
-            'is_public'    => false,
             'draw_started' => false,
             'winner_ids'   => null,
             'drawn_at'     => null,
             'drawn_by'     => null,
         ]);
 
-        // Reset is_winner di semua peserta
-        MegpreneurParticipant::where('is_winner', true)->update(['is_winner' => false]);
-
-        return back()->with('success', 'Sesi undian berhasil di-reset ke draft.');
+        return back()->with('success', 'Sesi undian berhasil di-reset. Anda dapat memilih pemenang baru!');
     }
 
     /**
@@ -234,6 +230,9 @@ class MegpreneurController extends Controller
         }
         if ($participant->foto_follow_tiktok) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($participant->foto_follow_tiktok);
+        }
+        if ($participant->foto_selfie_booth) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($participant->foto_selfie_booth);
         }
 
         $participant->delete();

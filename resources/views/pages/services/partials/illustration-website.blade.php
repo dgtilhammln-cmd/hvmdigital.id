@@ -1,4 +1,4 @@
-{{-- Website UI mockup — brand colors only --}}
+﻿{{-- Website UI mockup — brand colors only --}}
 <style>
 .ws-float{animation:wsFloat 3s ease-in-out infinite}
 .ws-blink{animation:wsBlink 1s step-end infinite}
@@ -24,7 +24,7 @@
   <!-- URL bar -->
   <rect x="86" y="28" width="184" height="18" rx="9" fill="#0a3d30"/>
   <circle cx="98" cy="37" r="4" stroke="#9acb03" stroke-width="1" stroke-opacity=".5"/>
-  <text x="191" y="40" font-size="8" fill="#9acb03" text-anchor="middle" font-family="monospace" opacity=".8">hvmdigital.id</text>
+  <text x="191" y="40" font-size="8" fill="#9acb03" text-anchor="middle" font-family="monospace" opacity=".8">hvm-digital.id</text>
   <rect x="261" y="31" width="4" height="12" rx="1" fill="#9acb03" opacity=".3" class="ws-blink"/>
   <!-- Hero section -->
   <rect x="26" y="66" width="178" height="64" rx="8" fill="#075749" opacity=".6"/>

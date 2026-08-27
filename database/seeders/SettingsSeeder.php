@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace Database\Seeders;
 
@@ -20,7 +20,7 @@ class SettingsSeeder extends Seeder
             // Contact
             ['key' => 'whatsapp',         'value' => '6285179982373',              'group' => 'contact', 'type' => 'text',  'label' => 'Nomor WhatsApp (tanpa +)'],
             ['key' => 'whatsapp_display', 'value' => '+62851-7998-2373',           'group' => 'contact', 'type' => 'text',  'label' => 'Tampilan WhatsApp'],
-            ['key' => 'email',            'value' => 'bisnis@hvmdigital.id',       'group' => 'contact', 'type' => 'text',  'label' => 'Email Bisnis'],
+            ['key' => 'email',            'value' => 'bisnis@hvm-digital.id',       'group' => 'contact', 'type' => 'text',  'label' => 'Email Bisnis'],
             ['key' => 'instagram',        'value' => 'https://www.instagram.com/hvmdigital.id', 'group' => 'contact', 'type' => 'text', 'label' => 'Instagram URL'],
             ['key' => 'address_surabaya', 'value' => 'Jl. Rungkut Lor VII Dalam, Rungkut, Surabaya, Jawa Timur', 'group' => 'contact', 'type' => 'textarea', 'label' => 'Alamat Surabaya (HQ)'],
             ['key' => 'address_bekasi',   'value' => 'Sentra Bisnis Kota Harapan Indah Blok SS No 11, Bekasi', 'group' => 'contact', 'type' => 'textarea', 'label' => 'Alamat Bekasi'],

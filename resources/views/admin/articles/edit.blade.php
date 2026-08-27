@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title','Edit — '.$article->title)
 @section('page-title','Edit Artikel')
 
@@ -186,7 +186,7 @@
                     <div class="bg-white/3 rounded-xl p-4 border border-white/5">
                         <p class="text-white/30 text-[10px] uppercase tracking-widest mb-3 font-medium">Google SERP Preview</p>
                         <div class="text-blue-400 text-base font-medium leading-tight mb-1" id="serp-title">{{ $article->getRawOriginal('meta_title') ?: $article->title }}</div>
-                        <div class="text-green-500 text-xs mb-1">hvmdigital.id › artikel › <span id="serp-slug">{{ $article->slug }}</span></div>
+                        <div class="text-green-500 text-xs mb-1">hvm-digital.id › artikel › <span id="serp-slug">{{ $article->slug }}</span></div>
                         <div class="text-gray-300 text-sm font-light leading-relaxed" id="serp-desc">{{ $article->getRawOriginal('meta_description') ?: $article->excerpt }}</div>
                     </div>
                 </div>

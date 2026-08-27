@@ -48,6 +48,7 @@ class MegpreneurController extends Controller
             'bidang_sektor'     => 'required|string|max:100',
             'foto_follow_ig'    => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'foto_follow_tiktok'=> 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'foto_selfie_booth' => 'required|image|mimes:jpeg,png,jpg|max:5120',
             'konfirmasi_maps'   => 'required|accepted',
         ], [
             'nama_pic.required'           => 'Nama penanggung jawab wajib diisi.',
@@ -61,12 +62,16 @@ class MegpreneurController extends Controller
             'foto_follow_tiktok.required' => 'Screenshot follow TikTok wajib diupload.',
             'foto_follow_tiktok.image'    => 'File harus berupa gambar.',
             'foto_follow_tiktok.max'      => 'Ukuran file maksimal 2MB.',
+            'foto_selfie_booth.required'  => 'Foto selfie wajib diupload.',
+            'foto_selfie_booth.image'     => 'Foto selfie harus berupa gambar.',
+            'foto_selfie_booth.max'       => 'Ukuran foto selfie maksimal 5MB.',
             'konfirmasi_maps.accepted'    => 'Konfirmasi kunjungan Google Maps wajib dicentang.',
         ]);
 
         // Upload foto
         $pathIg     = $request->file('foto_follow_ig')->store('megpreneur/bukti', 'public');
         $pathTiktok = $request->file('foto_follow_tiktok')->store('megpreneur/bukti', 'public');
+        $pathSelfie = $request->file('foto_selfie_booth')->store('megpreneur/bukti', 'public');
 
         // Generate nomor peserta unik
         $nomor = MegpreneurParticipant::generateNomor();
@@ -79,6 +84,7 @@ class MegpreneurController extends Controller
             'bidang_sektor'     => $request->bidang_sektor,
             'foto_follow_ig'    => $pathIg,
             'foto_follow_tiktok'=> $pathTiktok,
+            'foto_selfie_booth' => $pathSelfie,
             'konfirmasi_maps'   => true,
         ]);
 

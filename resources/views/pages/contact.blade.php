@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('content')
 
@@ -45,14 +45,14 @@
                     </a>
 
                     {{-- Email --}}
-                    <a href="mailto:{{ setting('email', 'bisnis@hvmdigital.id') }}"
+                    <a href="mailto:{{ setting('email', 'bisnis@hvm-digital.id') }}"
                        class="flex items-center gap-4 bg-white dark:bg-[#0d1f15] rounded-2xl p-5 border border-gray-100 dark:border-white/5 hover:border-[#9acb03]/50 hover:shadow-lg transition-all group">
                         <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br from-[#075749]/10 to-[#9acb03]/15">
                             <svg class="w-6 h-6 text-[#075749] dark:text-[#9acb03]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         </div>
                         <div>
                             <p class="text-xs text-gray-400 font-light mb-0.5">Email</p>
-                            <p class="font-semibold text-[#0a1f12] dark:text-white group-hover:text-[#075749] dark:group-hover:text-[#9acb03] transition-colors">{{ setting('email', 'bisnis@hvmdigital.id') }}</p>
+                            <p class="font-semibold text-[#0a1f12] dark:text-white group-hover:text-[#075749] dark:group-hover:text-[#9acb03] transition-colors">{{ setting('email', 'bisnis@hvm-digital.id') }}</p>
                         </div>
                     </a>
 
@@ -115,7 +115,7 @@
                         Chat WhatsApp Sekarang
                     </a>
 
-                    <a href="mailto:{{ setting('email', 'bisnis@hvmdigital.id') }}?subject=Konsultasi%20Layanan%20HVM%20Digital"
+                    <a href="mailto:{{ setting('email', 'bisnis@hvm-digital.id') }}?subject=Konsultasi%20Layanan%20HVM%20Digital"
                        class="w-full flex items-center justify-center gap-3 font-semibold px-8 py-4 rounded-2xl border-2 border-[#075749]/20 hover:border-[#075749] text-[#075749] dark:text-[#9acb03] dark:border-[#9acb03]/20 dark:hover:border-[#9acb03] transition-all hover:scale-[1.02]">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         Kirim Email

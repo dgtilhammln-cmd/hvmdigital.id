@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
@@ -75,7 +75,7 @@ class PageManagementController extends Controller
         ],
         'contact' => [
             'meta_title' => 'Kontak HVM Digital — Hubungi Kami Sekarang',
-            'meta_description' => 'Hubungi HVM Digital untuk konsultasi gratis. WhatsApp: +62851-7998-2373. Email: bisnis@hvmdigital.id. Kantor Surabaya & Bekasi.',
+            'meta_description' => 'Hubungi HVM Digital untuk konsultasi gratis. WhatsApp: +62851-7998-2373. Email: bisnis@hvm-digital.id. Kantor Surabaya & Bekasi.',
             'meta_keywords' => 'kontak HVM Digital, hubungi HVM Digital, konsultasi website gratis, WhatsApp HVM Digital',
         ],
     ];

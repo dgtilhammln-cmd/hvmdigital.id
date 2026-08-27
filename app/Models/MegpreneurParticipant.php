@@ -16,6 +16,7 @@ class MegpreneurParticipant extends Model
         'bidang_sektor',
         'foto_follow_ig',
         'foto_follow_tiktok',
+        'foto_selfie_booth',
         'konfirmasi_maps',
         'is_valid',
         'is_winner',
@@ -28,12 +29,12 @@ class MegpreneurParticipant extends Model
     ];
 
     /**
-     * Generate nomor peserta berikutnya (MGP-XXXX).
+     * Generate nomor peserta berikutnya (HVM-XXXX).
      */
     public static function generateNomor(): string
     {
         $last = static::max('id') ?? 0;
-        return 'MGP-' . str_pad($last + 1, 4, '0', STR_PAD_LEFT);
+        return 'HVM-' . str_pad($last + 1, 4, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -45,7 +46,7 @@ class MegpreneurParticipant extends Model
     }
 
     /**
-     * Accessor: nomor peserta dalam format MGP-0001.
+     * Accessor: nomor peserta dalam format HVM-0001.
      */
     public function getNomorFormattedAttribute(): string
     {
