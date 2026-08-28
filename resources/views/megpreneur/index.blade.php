@@ -84,10 +84,10 @@
     .hero-title {
       font-family: 'Montserrat', sans-serif;
       font-weight: 900;
-      line-height: 1;
+      line-height: 1.1;
       letter-spacing: -0.01em;
       /* Mobile default */
-      font-size: clamp(52px, 16vw, 100px);
+      font-size: clamp(36px, 10vw, 80px);
     }
     .hero-year {
       font-size: clamp(20px, 6vw, 38px);
