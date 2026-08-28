@@ -404,16 +404,16 @@
         </a>
 
         {{-- Stats --}}
-        <div class="grid grid-cols-3 gap-3 max-w-xs mx-auto mt-2">
-          <div class="stat-box">
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-4">
+          <div class="stat-box w-28 sm:w-36">
             <div class="stat-num" id="stat-total">{{ $participants->count() }}</div>
             <div class="stat-label">Peserta</div>
           </div>
-          <div class="stat-box">
+          <div class="stat-box w-28 sm:w-36">
             <div class="stat-num white">1</div>
             <div class="stat-label">Event</div>
           </div>
-          <div class="stat-box">
+          <div class="stat-box w-28 sm:w-36">
             <div class="stat-num">2026</div>
             <div class="stat-label">Tahun</div>
           </div>
