@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Megpreneur 2026 — Undian Live | HVM Digital')
-@section('meta_description', 'Saksikan live undian Megpreneur 2026 oleh HVM Digital. Ribuan peserta UMKM berkompetisi memenangkan hadiah eksklusif!')
+@section('title', 'Undian Giveaway Booth HVM Digital - Megpreneur 2026')
+@section('meta_description', 'Saksikan live undian Giveaway Booth HVM Digital di Megpreneur 2026. Siapa yang beruntung?')
 
 @push('head')
   <meta property="og:title" content="Megpreneur 2026 — Undian Live by HVM Digital">
@@ -15,32 +15,31 @@
 
   <style>
     /* =============================================
-     MEGPRENEUR 2026 — MAIN STYLES
+     MEGPRENEUR 2026 — MOBILE-FIRST STYLES
      ============================================= */
-    :root {
-      --mg-green: #9acb03;
-      --mg-dark: #061009;
-      --mg-mid: #0d2a18;
-      --mg-teal: #075749;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+
+    * { box-sizing: border-box; }
 
     .mgp-page {
-      background: var(--mg-dark);
+      background: #061009;
       min-height: 100vh;
       color: #fff;
+      font-family: 'Montserrat', sans-serif;
     }
 
-    /* Hero Section */
+    /* ---- HERO ---- */
     .mgp-hero-section {
       position: relative;
-      min-height: 80vh;
+      min-height: 100svh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 80px 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(7, 87, 73, 0.6) 0%, transparent 70%),
-        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(154, 203, 3, 0.15) 0%, transparent 60%),
-        var(--mg-dark);
+      padding: 100px 20px 60px;
+      background:
+        radial-gradient(ellipse 120% 60% at 50% -10%, rgba(7,87,73,0.55) 0%, transparent 65%),
+        radial-gradient(ellipse 80% 50% at 80% 110%, rgba(154,203,3,0.12) 0%, transparent 60%),
+        #061009;
       overflow: hidden;
     }
 
@@ -48,11 +47,10 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239acb03' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='1' fill='%239acb03' fill-opacity='0.04'/%3E%3C/g%3E%3C/svg%3E");
       pointer-events: none;
     }
 
-    /* Animated glow orbs */
     .glow-orb {
       position: absolute;
       border-radius: 50%;
@@ -60,167 +58,164 @@
       pointer-events: none;
       animation: orb-pulse 8s ease-in-out infinite alternate;
     }
-
     @keyframes orb-pulse {
-      from {
-        opacity: 0.3;
-        transform: scale(1);
-      }
-
-      to {
-        opacity: 0.7;
-        transform: scale(1.2);
-      }
+      from { opacity: 0.25; transform: scale(1); }
+      to   { opacity: 0.55; transform: scale(1.15); }
     }
 
-    /* Title badge */
+    /* Event badge */
     .event-badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(154, 203, 3, 0.12);
-      border: 1px solid rgba(154, 203, 3, 0.35);
+      gap: 7px;
+      background: rgba(154,203,3,0.1);
+      border: 1px solid rgba(154,203,3,0.3);
       border-radius: 50px;
-      padding: 6px 18px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
+      padding: 5px 16px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--mg-green);
+      color: #9acb03;
+      font-family: 'Montserrat', sans-serif;
     }
 
-    /* Counter stats */
-    .stat-box {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 20px 24px;
-      text-align: center;
-      backdrop-filter: blur(10px);
+    /* Hero title */
+    .hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      /* Mobile default */
+      font-size: clamp(52px, 16vw, 100px);
     }
-
-    /* Participant cards */
-    .participant-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
+    .hero-year {
+      font-size: clamp(20px, 6vw, 38px);
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.45);
+      display: block;
+      margin-top: 4px;
     }
-
-    .participant-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.2s;
-    }
-
-    .participant-card:hover {
-      background: rgba(154, 203, 3, 0.07);
-      border-color: rgba(154, 203, 3, 0.3);
-      transform: translateY(-1px);
-    }
-
-    .participant-card.winner-glow {
-      animation: winner-pulse 1s ease-in-out infinite alternate;
-      border-color: var(--mg-green) !important;
-      background: rgba(154, 203, 3, 0.15) !important;
-    }
-
-    @keyframes winner-pulse {
-      from {
-        box-shadow: 0 0 15px rgba(154, 203, 3, 0.3);
-      }
-
-      to {
-        box-shadow: 0 0 40px rgba(154, 203, 3, 0.7);
-      }
-    }
-
-    /* SLOT MACHINE SECTION */
-    .slot-section {
-      background: radial-gradient(ellipse at center, rgba(7, 87, 73, 0.3) 0%, transparent 70%),
-        rgba(0, 0, 0, 0.5);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 80px 0;
-    }
-
-    .slot-machine-wrapper {
-      max-width: 680px;
+    .hero-subtitle {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: clamp(13px, 3.5vw, 16px);
+      color: rgba(255,255,255,0.5);
+      line-height: 1.65;
+      max-width: 320px;
       margin: 0 auto;
     }
+    .hero-subtitle strong {
+      font-weight: 600;
+      color: #9acb03;
+    }
+
+    /* CTA button */
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #075749, #9acb03);
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 14px 28px;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: all 0.3s;
+      letter-spacing: 0.02em;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 36px rgba(154,203,3,0.35);
+    }
+
+    /* Stats */
+    .stat-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 16px 12px;
+      text-align: center;
+    }
+    .stat-box .stat-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(22px, 6vw, 32px);
+      font-weight: 800;
+      color: #9acb03;
+      line-height: 1;
+    }
+    .stat-box .stat-num.white { color: #fff; }
+    .stat-box .stat-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-top: 5px;
+    }
+
+    /* ---- SLOT MACHINE SECTION ---- */
+    .slot-section {
+      background: radial-gradient(ellipse at center, rgba(7,87,73,0.25) 0%, transparent 70%), rgba(0,0,0,0.4);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 60px 20px;
+    }
+
+    .slot-machine-wrapper { max-width: 600px; margin: 0 auto; }
 
     .slot-frame {
       background: linear-gradient(180deg, #0a1a0f 0%, #061009 100%);
-      border: 2px solid rgba(154, 203, 3, 0.3);
-      border-radius: 28px;
-      padding: 32px;
+      border: 2px solid rgba(154,203,3,0.25);
+      border-radius: 24px;
+      padding: 24px 20px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 0 80px rgba(154, 203, 3, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 60px rgba(154,203,3,0.08), inset 0 1px 0 rgba(255,255,255,0.04);
     }
-
     .slot-frame::before {
       content: '';
       position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
+      top: -2px; left: -2px; right: -2px;
       height: 3px;
       background: linear-gradient(90deg, transparent, #9acb03, transparent);
-      border-radius: 28px 28px 0 0;
+      border-radius: 24px 24px 0 0;
     }
 
-    /* Slot window — scrolling names */
     .slot-window {
-      height: 200px;
+      height: 180px;
       overflow: hidden;
       position: relative;
-      border-radius: 16px;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(154, 203, 3, 0.2);
-      margin-bottom: 28px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(154,203,3,0.18);
+      margin-bottom: 20px;
     }
-
-    .slot-window::before,
-    .slot-window::after {
+    .slot-window::before, .slot-window::after {
       content: '';
       position: absolute;
-      left: 0;
-      right: 0;
-      height: 60px;
+      left: 0; right: 0;
+      height: 55px;
       z-index: 2;
       pointer-events: none;
     }
+    .slot-window::before { top: 0; background: linear-gradient(to bottom, rgba(6,16,9,1), transparent); }
+    .slot-window::after  { bottom: 0; background: linear-gradient(to top, rgba(6,16,9,1), transparent); }
 
-    .slot-window::before {
-      top: 0;
-      background: linear-gradient(to bottom, rgba(6, 16, 9, 1), transparent);
-    }
-
-    .slot-window::after {
-      bottom: 0;
-      background: linear-gradient(to top, rgba(6, 16, 9, 1), transparent);
-    }
-
-    /* Center highlight line */
     .slot-highlight {
       position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
+      top: 50%; left: 0; right: 0;
       transform: translateY(-50%);
-      height: 56px;
-      background: rgba(154, 203, 3, 0.08);
-      border-top: 1px solid rgba(154, 203, 3, 0.4);
-      border-bottom: 1px solid rgba(154, 203, 3, 0.4);
+      height: 52px;
+      background: rgba(154,203,3,0.07);
+      border-top: 1px solid rgba(154,203,3,0.35);
+      border-bottom: 1px solid rgba(154,203,3,0.35);
       z-index: 1;
       pointer-events: none;
     }
-
     .slot-tape {
       display: flex;
       flex-direction: column;
@@ -228,36 +223,36 @@
       transition: transform 0.1s linear;
       will-change: transform;
     }
-
     .slot-item {
-      height: 56px;
+      height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 24px;
-      white-space: nowrap;
+      padding: 0 16px;
       width: 100%;
       flex-shrink: 0;
     }
-
     .slot-item-inner {
-      font-size: 18px;
-      font-weight: 800;
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(14px, 4vw, 17px);
+      font-weight: 700;
       color: #fff;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.01em;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      max-width: 100%;
     }
-
     .slot-item-inner .nomor {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
-      color: rgba(154, 203, 3, 0.7);
-      background: rgba(154, 203, 3, 0.1);
-      border: 1px solid rgba(154, 203, 3, 0.2);
+      color: rgba(154,203,3,0.7);
+      background: rgba(154,203,3,0.1);
+      border: 1px solid rgba(154,203,3,0.2);
       border-radius: 20px;
-      padding: 2px 8px;
+      padding: 2px 7px;
       letter-spacing: 0.06em;
       flex-shrink: 0;
     }
@@ -267,148 +262,98 @@
       width: 100%;
       background: linear-gradient(135deg, #075749, #9acb03);
       border: none;
-      border-radius: 18px;
-      padding: 20px 40px;
+      border-radius: 14px;
+      padding: 16px 32px;
       color: #fff;
-      font-size: 18px;
-      font-weight: 900;
-      letter-spacing: 0.08em;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.3s;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 8px 30px rgba(154, 203, 3, 0.3);
+      box-shadow: 0 6px 24px rgba(154,203,3,0.25);
     }
-
     .spin-btn::after {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -60%;
-      width: 40%;
-      height: 200%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      top: -50%; left: -60%;
+      width: 40%; height: 200%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
       transform: skewX(-15deg);
       animation: btn-shimmer 3s ease-in-out infinite;
     }
-
-    @keyframes btn-shimmer {
-      0% {
-        left: -60%;
-      }
-
-      100% {
-        left: 120%;
-      }
-    }
-
-    .spin-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 16px 50px rgba(154, 203, 3, 0.5);
-    }
-
-    .spin-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none !important;
-      box-shadow: none !important;
-    }
-
+    @keyframes btn-shimmer { 0% { left: -60%; } 100% { left: 120%; } }
+    .spin-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(154,203,3,0.45); }
+    .spin-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
     .spin-btn.spinning {
       background: linear-gradient(135deg, #9acb03, #075749);
       animation: spin-btn-pulse 0.5s ease-in-out infinite alternate;
     }
-
     @keyframes spin-btn-pulse {
-      from {
-        box-shadow: 0 8px 30px rgba(154, 203, 3, 0.3);
-      }
-
-      to {
-        box-shadow: 0 8px 60px rgba(154, 203, 3, 0.7);
-      }
+      from { box-shadow: 0 6px 24px rgba(154,203,3,0.25); }
+      to   { box-shadow: 0 6px 50px rgba(154,203,3,0.65); }
     }
 
-    /* Winner overlay */
+    /* ---- WINNER OVERLAY ---- */
     #winner-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(6, 16, 9, 0.95);
+      background: rgba(6,16,9,0.95);
       z-index: 9999;
       align-items: center;
       justify-content: center;
+      padding: 20px;
       backdrop-filter: blur(10px);
     }
-
-    #winner-overlay.show {
-      display: flex;
-    }
+    #winner-overlay.show { display: flex; }
 
     .winner-modal {
-      max-width: 560px;
-      width: 90%;
+      max-width: 480px;
+      width: 100%;
       text-align: center;
       animation: modal-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
     }
-
     @keyframes modal-in {
-      from {
-        opacity: 0;
-        transform: scale(0.7) translateY(40px);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
+      from { opacity: 0; transform: scale(0.75) translateY(30px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
     }
-
     .winner-card {
-      background: linear-gradient(135deg, rgba(154, 203, 3, 0.1), rgba(7, 87, 73, 0.2));
-      border: 2px solid rgba(154, 203, 3, 0.5);
-      border-radius: 28px;
-      padding: 40px 36px;
-      box-shadow: 0 0 100px rgba(154, 203, 3, 0.25);
+      background: linear-gradient(135deg, rgba(154,203,3,0.08), rgba(7,87,73,0.18));
+      border: 2px solid rgba(154,203,3,0.45);
+      border-radius: 24px;
+      padding: 32px 24px;
+      box-shadow: 0 0 80px rgba(154,203,3,0.2);
     }
 
     /* Waiting state */
-    .waiting-state {
-      text-align: center;
-      padding: 60px 24px;
-    }
-
+    .waiting-state { text-align: center; padding: 40px 20px; }
     .pulse-ring {
-      width: 80px;
-      height: 80px;
+      width: 70px; height: 70px;
       border-radius: 50%;
-      border: 3px solid rgba(154, 203, 3, 0.4);
-      margin: 0 auto 20px;
+      border: 3px solid rgba(154,203,3,0.35);
+      margin: 0 auto 16px;
       animation: ring-pulse 2s ease-in-out infinite;
     }
-
     @keyframes ring-pulse {
-
-      0%,
-      100% {
-        transform: scale(1);
-        opacity: 0.5;
-      }
-
-      50% {
-        transform: scale(1.1);
-        opacity: 1;
-      }
+      0%,100% { transform: scale(1); opacity: 0.45; }
+      50%      { transform: scale(1.1); opacity: 1; }
     }
 
-    /* Admin controls area (hidden unless token present) */
-    #admin-trigger-area {
-      display: none;
-    }
+    /* Admin controls */
+    #admin-trigger-area { display: none; }
+    #admin-trigger-area.show { display: block; }
 
-    #admin-trigger-area.show {
-      display: block;
+    /* Section heading */
+    .section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: clamp(22px, 6vw, 32px);
+      color: #fff;
+      letter-spacing: -0.01em;
     }
   </style>
 @endpush
@@ -424,77 +369,71 @@
         style="width:400px;height:400px;background:rgba(154,203,3,0.15);bottom:-80px;right:-80px;animation-delay:3s;">
       </div>
 
-      <div class="container mx-auto px-4 relative z-10 text-center">
-        {{-- Live badge --}}
+      <div class="container mx-auto px-5 relative z-10 text-center">
+
+        {{-- Live/Active badge --}}
         @if($isActive && $session->draw_started)
           <div class="event-badge mb-6"
-            style="background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);color:#f87171;">
-            <span class="w-2 h-2 bg-red-400 rounded-full animate-pulse"></span>
-            LIVE · UNDIAN SEDANG BERJALAN
+            style="background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.35);color:#f87171;">
+            <span class="w-2 h-2 bg-red-400 rounded-full" style="animation:orb-pulse 1s ease-in-out infinite alternate;"></span>
+            LIVE &middot; UNDIAN BERJALAN
           </div>
         @elseif($isActive)
           <div class="event-badge mb-6">
-            <span class="w-2 h-2 bg-[#9acb03] rounded-full animate-pulse"></span>
-            MEGPRENEUR 2026 · UNDIAN AKTIF
+            <span class="w-2 h-2 bg-[#9acb03] rounded-full" style="animation:orb-pulse 1.5s ease-in-out infinite alternate;"></span>
+            GIVEAWAY BOOTH HVM DIGITAL
           </div>
         @endif
 
         {{-- Mega title --}}
-        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black leading-tight mb-6">
-          <span
-            style="background:linear-gradient(135deg,#fff 30%,rgba(255,255,255,0.6));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">MEG</span><span
-            style="background:linear-gradient(135deg,#9acb03,#5a7a00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">PRENEUR</span>
-          <span
-            style="background:linear-gradient(135deg,#fff 30%,rgba(255,255,255,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:0.6em;letter-spacing:0.1em;display:inline-block;margin-left:-10px;">2026</span>
+        <h1 class="hero-title mb-2">
+          <span style="background:linear-gradient(135deg,#fff 40%,rgba(255,255,255,0.55));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">MEG</span><span style="background:linear-gradient(135deg,#9acb03,#6a9500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">PRENEUR</span>
         </h1>
+        <span class="hero-year">2026</span>
 
-        <p class="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-4">
-          Event akbar UMKM bersama <strong class="text-[#9acb03]">HVM Digital</strong> - Daftar, Follow, dan Menangkan!
+        <p class="hero-subtitle mt-5 mb-8">
+          Kunjungi <strong>Booth HVM Digital</strong>, ikuti undian, dan menangkan hadiah spesial!
         </p>
 
-        <div class="flex flex-wrap items-center justify-center gap-3 mb-12">
-          <a href="{{ route('megpreneur.form') }}"
-            class="inline-flex items-center gap-2 bg-gradient-to-r from-[#075749] to-[#9acb03] text-white font-bold px-8 py-4 rounded-2xl hover:shadow-[0_12px_40px_rgba(154,203,3,0.4)] transition-all hover:-translate-y-1">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            Daftar Sekarang
-          </a>
-        </div>
+        <a href="{{ route('megpreneur.form') }}" class="cta-btn mb-10" id="cta-daftar">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          Daftar Sekarang
+        </a>
 
         {{-- Stats --}}
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-xl mx-auto">
+        <div class="grid grid-cols-3 gap-3 max-w-xs mx-auto mt-2">
           <div class="stat-box">
-            <div class="text-3xl font-black text-[#9acb03]" id="stat-total">{{ $participants->count() }}</div>
-            <div class="text-white/50 text-xs mt-1 uppercase tracking-wider">Peserta</div>
+            <div class="stat-num" id="stat-total">{{ $participants->count() }}</div>
+            <div class="stat-label">Peserta</div>
           </div>
           <div class="stat-box">
-            <div class="text-3xl font-black text-white">1</div>
-            <div class="text-white/50 text-xs mt-1 uppercase tracking-wider">Event</div>
+            <div class="stat-num white">1</div>
+            <div class="stat-label">Event</div>
           </div>
-          <div class="stat-box col-span-2 md:col-span-1">
-            <div class="text-3xl font-black text-[#9acb03]">2026</div>
-            <div class="text-white/50 text-xs mt-1 uppercase tracking-wider">Tahun</div>
+          <div class="stat-box">
+            <div class="stat-num">2026</div>
+            <div class="stat-label">Tahun</div>
           </div>
         </div>
+
       </div>
     </section>
 
-    {{-- ======== SLOT MACHINE / WHEEL SECTION ======== --}}
+    {{-- SLOT MACHINE SECTION --}}
     @if($isActive)
       <section id="undian" class="slot-section">
-        <div class="container mx-auto px-4">
-          <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-black text-white mb-3 flex items-center justify-center gap-3">
-              <svg class="w-8 h-8 text-[#9acb03]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="container mx-auto px-5">
+          <div class="text-center mb-10">
+            <h2 class="section-title flex items-center justify-center gap-3 mb-2">
+              <svg class="w-7 h-7 text-[#9acb03] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Mesin Undian
-              <span
-                style="background:linear-gradient(135deg,#9acb03,#5a7a00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Megpreneur</span>
+              Mesin Undian <span style="background:linear-gradient(135deg,#9acb03,#5a7a00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Live</span>
             </h2>
-            <p class="text-white/50 text-base" id="slot-status-text">
+            <p class="text-white/45 text-sm" id="slot-status-text">
               @if($session->isAnnounced())
                 Pemenang telah diumumkan!
               @elseif($session->draw_started)
@@ -547,38 +486,7 @@
       </section>
     @endif
 
-    {{-- ======== DAFTAR PESERTA SECTION ======== --}}
-    @if($participants->count() > 0)
-      <section class="py-20" style="background:rgba(0,0,0,0.2);">
-        <div class="container mx-auto px-4">
-          <div class="flex items-center justify-between mb-10 flex-wrap gap-4">
-            <div>
-              <h2 class="text-2xl md:text-3xl font-black text-white mb-1">
-                Daftar Peserta
-                <span class="text-[#9acb03]">({{ $participants->count() }})</span>
-              </h2>
-              <p class="text-white/40 text-sm">Semua peserta yang telah mendaftar Megpreneur 2026</p>
-            </div>
-          </div>
-
-          <div class="participant-grid" id="participantGrid">
-            @foreach($participants as $p)
-              <div class="participant-card" id="pcard-{{ $p->id }}" data-id="{{ $p->id }}"
-                data-nama="{{ $p->nama_usaha }}" data-nomor="{{ $p->nomor_peserta }}">
-                <div
-                  class="w-9 h-9 bg-gradient-to-br from-[#075749]/60 to-[#9acb03]/30 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm text-[#9acb03]">
-                  {{ strtoupper(substr($p->nama_usaha, 0, 1)) }}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-white text-sm font-semibold truncate">{{ $p->nama_usaha }}</p>
-                  <p class="text-[#9acb03]/70 text-xs font-mono">{{ $p->nomor_peserta }}</p>
-                </div>
-              </div>
-            @endforeach
-          </div>
-        </div>
-      </section>
-    @endif
+    {{-- Daftar Peserta section dihapus per request --}}
 
   </div>
 
