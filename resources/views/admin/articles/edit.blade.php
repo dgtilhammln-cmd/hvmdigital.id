@@ -18,7 +18,7 @@
 @endpush
 
 @section('content')
-<div class="max-w-6xl mx-auto">
+<div class="max-w-6xl mx-auto" style="color:#fff">
     {{-- Top Bar --}}
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
@@ -214,7 +214,7 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                                 <input type="text" name="faqs[{{ $index }}][question]" value="{{ $faq['question'] ?? '' }}" placeholder="Pertanyaan FAQ..." class="w-full bg-transparent border-b border-white/10 text-white font-medium text-sm px-0 py-2 focus:outline-none focus:border-[#9acb03]/50 transition-all mb-4">
-                                <textarea name="faqs[{{ $index }}][answer]" rows="2" placeholder="Jawaban FAQ..." class="w-full bg-transparent border-b border-white/10 text-white/70 font-light text-sm px-0 py-2 focus:outline-none focus:border-[#9acb03]/50 transition-all resize-y"></textarea>
+                                <textarea name="faqs[{{ $index }}][answer]" rows="2" placeholder="Jawaban FAQ..." class="w-full bg-transparent border-b border-white/10 text-white/70 font-light text-sm px-0 py-2 focus:outline-none focus:border-[#9acb03]/50 transition-all resize-y">{{ $faq['answer'] ?? '' }}</textarea>
                             </div>
                             @endforeach
                         </div>
@@ -260,10 +260,11 @@
 
                     <div class="pt-4 border-t border-white/5">
                         <label class="block text-white/70 text-sm font-medium mb-4">Google SERP Preview</label>
-                        <div class="bg-white rounded-xl p-5 border border-gray-200 w-full max-w-2xl">
-                            <div class="text-[#1a0dab] text-[20px] leading-tight mb-1 font-normal truncate" id="serp-title">{{ $article->getRawOriginal('meta_title') ?: $article->title }}</div>
-                            <div class="text-[#006621] text-[14px] leading-tight mb-1 truncate">hvm-digital.id › artikel › <span id="serp-slug">{{ $article->slug }}</span></div>
-                            <div class="text-[#545454] text-[14px] leading-snug line-clamp-2" id="serp-desc">{{ $article->getRawOriginal('meta_description') ?: $article->excerpt }}</div>
+                        <div style="background:#1a2e23;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;max-width:640px;">
+                            <div style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:6px;letter-spacing:.08em;">PREVIEW — Tampilan di Google</div>
+                            <div style="color:#8ab4f8;font-size:18px;font-weight:400;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="serp-title">{{ $article->getRawOriginal('meta_title') ?: $article->title }}</div>
+                            <div style="color:#4db860;font-size:13px;margin-bottom:6px;">hvm-digital.id › artikel › <span id="serp-slug">{{ $article->slug }}</span></div>
+                            <div style="color:rgba(255,255,255,0.6);font-size:13px;line-height:1.6;" id="serp-desc">{{ $article->getRawOriginal('meta_description') ?: $article->excerpt }}</div>
                         </div>
                     </div>
                 </div>
