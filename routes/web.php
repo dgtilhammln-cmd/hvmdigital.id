@@ -25,6 +25,8 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\PageManagementController;
 use App\Http\Controllers\Admin\MegpreneurController as AdminMegpreneurController;
+use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\OrderController;
 
 // ========================================
 // PUBLIC ROUTES
@@ -403,6 +405,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/megpreneur/reset', [AdminMegpreneurController::class, 'resetDraw'])->name('megpreneur.reset');
             Route::post('/megpreneur/{id}/toggle-valid', [AdminMegpreneurController::class, 'toggleValid'])->name('megpreneur.toggle-valid');
             Route::delete('/megpreneur/{id}', [AdminMegpreneurController::class, 'destroyParticipant'])->name('megpreneur.destroy');
+
+            // ========================================
+            // SELF SERVICE — AKUN & ORDER
+            // ========================================
+            Route::get('/accounts',                   [AccountController::class, 'index'])->name('accounts.index');
+            Route::get('/accounts/{user}',            [AccountController::class, 'show'])->name('accounts.show');
+            Route::put('/accounts/{user}/password',   [AccountController::class, 'updatePassword'])->name('accounts.update-password');
+
+            Route::get('/orders',                     [OrderController::class,  'index'])->name('orders.index');
         });
     });
 });
