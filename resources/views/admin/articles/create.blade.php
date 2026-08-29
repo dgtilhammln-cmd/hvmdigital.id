@@ -1,356 +1,309 @@
 @extends('layouts.admin')
-@section('title','Tambah Artikel')
-@section('page-title','Tambah Artikel Baru')
-
-@push('head')
-<link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
-<style>
-.EasyMDEContainer .CodeMirror { background: #f9fafb; color: #111827; border-color: #e5e7eb; min-height: 400px; font-family: 'Fira Code', monospace; font-size: 13px; }
-.EasyMDEContainer .editor-toolbar { background: #f9fafb; border-color: #e5e7eb; }
-.EasyMDEContainer .editor-toolbar button { color: #6b7280 !important; }
-.EasyMDEContainer .editor-toolbar button:hover, .EasyMDEContainer .editor-toolbar button.active { background: #e5e7eb; color: #111827 !important; }
-.EasyMDEContainer .editor-preview { background: #fff; color: #111827; }
-.EasyMDEContainer .editor-preview h1,.EasyMDEContainer .editor-preview h2,.EasyMDEContainer .editor-preview h3 { color: #075749; }
-.char-counter { font-size: 11px; transition: color .2s; }
-.char-counter.warn { color: #f59e0b; }
-.char-counter.danger { color: #ef4444; }
-
-/* Smart Category Suggester */
-#cat-suggestions { animation: fadeIn .2s ease; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
-.cat-suggestion-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    background: #f9fafb;
-    cursor: pointer;
-    transition: all .15s;
-    margin-bottom: 6px;
-    gap: 10px;
-}
-.cat-suggestion-item:hover { background: #f0fdf4; border-color: #9acb03; }
-.cat-suggestion-item.top-pick { border-color: #9acb03; background: #f0fdf4; }
-.cat-score-bar { height: 4px; border-radius: 2px; background: #e5e7eb; flex-shrink: 0; width: 60px; overflow:hidden; }
-.cat-score-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg,#9acb03,#075749); transition: width .3s; }
-</style>
-@endpush
+@section('title','Tambah Artikel Baru')
+@section('page-title','Tambah Artikel')
 
 @section('content')
-@php
-$catJson = json_encode($categories->map(function($p) {
-    return [
-        'id'       => $p->id,
-        'name'     => $p->name,
-        'children' => $p->children->map(function($c) {
-            return ['id' => $c->id, 'name' => $c->name];
-        })->values()->toArray(),
-    ];
-})->values()->toArray());
-@endphp
-<div class="max-w-5xl">
-    <form method="POST" action="{{ route('admin.articles.store') }}" enctype="multipart/form-data" id="article-form" class="space-y-6">
+<div class="max-w-6xl mx-auto">
+    {{-- Top Bar --}}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+            <div class="text-white/40 text-sm mb-1">
+                <a href="{{ route('admin.articles.index') }}" class="hover:text-white transition-colors">Semua Artikel</a>
+                <span class="mx-2">›</span>
+                <span class="text-white/70">Tambah Baru</span>
+            </div>
+            <h1 class="text-2xl font-bold text-white tracking-tight">Tulis Blog Post Baru</h1>
+        </div>
+    </div>
+
+    @if($errors->any())
+    <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6">
+        <ul class="text-red-400 text-sm space-y-1">@foreach($errors->all() as $e)<li>• {{ $e }}</li>@endforeach</ul>
+    </div>
+    @endif
+
+    <form method="POST" action="{{ route('admin.articles.store') }}" enctype="multipart/form-data" id="article-form">
         @csrf
 
-        @if($errors->any())
-        <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
-            <ul class="text-red-400 text-sm space-y-1">@foreach($errors->all() as $e)<li>• {{ $e }}</li>@endforeach</ul>
-        </div>
-        @endif
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-            {{-- ===== MAIN COLUMN ===== --}}
-            <div class="lg:col-span-2 space-y-5">
-
-                {{-- Judul & Slug --}}
-                <div class="bg-[#0d1f15] border border-white/5 rounded-2xl p-6 space-y-4">
-                    <div>
-                        <label class="block text-white/50 text-xs font-medium tracking-wider uppercase mb-2">Judul Artikel *</label>
-                        <input type="text" name="title" id="title-input" value="{{ old('title') }}" required
-                               class="w-full bg-white/5 border border-white/10 text-white font-light text-lg px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all"
-                               placeholder="Judul artikel yang menarik...">
-                    </div>
-                    <div>
-                        <label class="block text-white/50 text-xs font-medium tracking-wider uppercase mb-2">Slug URL (Opsional)</label>
-                        <input type="text" name="slug" id="slug-input" value="{{ old('slug') }}"
-                               class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all"
-                               placeholder="contoh-slug-artikel-manual">
-                        <p class="text-white/20 text-xs mt-2 font-light">Kosongkan jika ingin slug di-generate otomatis dari judul.</p>
-                    </div>
-                </div>
-
-                {{-- Excerpt --}}
-                <div class="bg-[#0d1f15] border border-white/5 rounded-2xl p-6">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                        <label class="text-white/50 text-xs font-medium tracking-wider uppercase">Ringkasan / Excerpt</label>
-                        <span id="excerpt-counter" class="char-counter text-white/30">0/500</span>
-                    </div>
-                    <textarea name="excerpt" id="excerpt-input" rows="3" maxlength="500"
-                              class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all resize-none"
-                              placeholder="Ringkasan singkat artikel (tampil di list & Google preview)...">{{ old('excerpt') }}</textarea>
-                </div>
-
-                {{-- KONTEN - QuillJS Editor --}}
-                <div class="bg-[#0d1f15] border border-white/5 rounded-2xl p-6">
-                    <div class="flex items-center justify-between mb-3">
-                        <label class="text-white/50 text-xs font-medium tracking-wider uppercase">Konten Artikel</label>
-                        <div class="flex gap-2">
-                            <button type="button" id="btn-visual" onclick="switchEditor('visual')"
-                                    class="text-xs px-3 py-1.5 rounded-lg bg-white text-black font-semibold shadow-sm transition-all">
-                                👁 Visual Editor
-                            </button>
-                            <button type="button" id="btn-html" onclick="switchEditor('html')"
-                                    class="text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium">
-                                &lt;/&gt; HTML / Code
-                            </button>
-                        </div>
-                    </div>
-
-                    {{-- Visual Editor (Quill) --}}
-                    <div id="visual-editor-wrap">
-                        <div id="editor-container" class="prose max-w-none" style="background: #ffffff; color: #111827; border-radius: 0 0 16px 16px; min-height: 400px; font-size: 15px; font-family: 'Montserrat', sans-serif;">
-                            {!! old('content') !!}
-                        </div>
-                    </div>
-
-                    {{-- Raw HTML Editor --}}
-                    <div id="html-editor-wrap" class="hidden">
-                        <textarea id="content-raw" rows="20"
-                                  class="w-full bg-[#0a1f12] border border-white/10 text-[#9acb03] font-mono text-xs p-4 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all resize-y leading-relaxed"></textarea>
-                    </div>
-
-                    <input type="hidden" name="content" id="content-input">
-                    <p class="text-white/30 text-[11px] mt-3 font-light">Gunakan Visual Editor untuk mengetik normal. Gunakan HTML/Code jika ingin menanam (embed) script khusus.</p>
-
-                    <style>
-                        /* Quill Toolbar styling */
-                        .ql-toolbar.ql-snow {
-                            background: #f9fafb;
-                            border: none;
-                            border-bottom: 1px solid #e5e7eb;
-                            border-radius: 16px 16px 0 0;
-                            padding: 12px 16px;
-                            font-family: inherit;
-                        }
-                        .ql-container.ql-snow {
-                            border: none;
-                        }
-                        /* Typography reset for Quill Editor */
-                        .ql-editor {
-                            min-height: 400px;
-                            padding: 32px;
-                            line-height: 1.8;
-                        }
-                        .ql-editor h1 { font-size: 2.25em; font-weight: 800; margin-top: 1.5em; margin-bottom: 0.8em; color: #000; line-height: 1.2; }
-                        .ql-editor h2 { font-size: 1.75em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.8em; color: #000; line-height: 1.3; }
-                        .ql-editor h3 { font-size: 1.35em; font-weight: 700; margin-top: 1.2em; margin-bottom: 0.6em; color: #111827; line-height: 1.4; }
-                        .ql-editor p { margin-bottom: 1.2em; }
-                        .ql-editor ul, .ql-editor ol { margin-bottom: 1.2em; padding-left: 1.5em; }
-                        .ql-editor li { margin-bottom: 0.5em; }
-                        .ql-editor a { color: #075749; text-decoration: underline; font-weight: 600; }
-                        .ql-editor blockquote { border-left: 4px solid #9acb03; padding-left: 1rem; color: #4b5563; font-style: italic; margin: 1.5em 0; }
-                        .ql-editor pre { background: #111827; color: #e5e7eb; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.2em; }
-                    </style>
-                </div>
-
-                {{-- FAQs --}}
-                <div class="bg-[#0d1f15] border border-white/5 rounded-2xl p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <label class="text-white/50 text-xs font-medium tracking-wider uppercase">Pertanyaan Sering Diajukan (FAQ)</label>
-                        <button type="button" onclick="addFaqRow()" class="text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/50 hover:bg-white/10 hover:text-white transition-all border border-white/10">
-                            + Tambah FAQ
-                        </button>
-                    </div>
-                    <div id="faq-container" class="space-y-4">
-                        @php $oldFaqs = old('faqs', []); @endphp
-                        @foreach($oldFaqs as $index => $faq)
-                        <div class="faq-row bg-white/5 border border-white/10 rounded-xl p-4 relative">
-                            <button type="button" onclick="this.closest('.faq-row').remove()" class="absolute top-4 right-4 text-white/20 hover:text-red-400 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                            </button>
-                            <input type="text" name="faqs[{{ $index }}][question]" value="{{ $faq['question'] ?? '' }}" placeholder="Pertanyaan..." class="w-full bg-transparent border-b border-white/10 text-white font-medium text-sm px-0 py-2 focus:outline-none focus:border-[#9acb03]/50 transition-all mb-3">
-                            <textarea name="faqs[{{ $index }}][answer]" rows="2" placeholder="Jawaban..." class="w-full bg-transparent border-b border-white/10 text-white/70 font-light text-sm px-0 py-2 focus:outline-none focus:border-[#9acb03]/50 transition-all resize-none">{{ $faq['answer'] ?? '' }}</textarea>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- SEO Panel --}}
-                <div class="bg-[#0d1f15] border border-white/5 rounded-2xl p-6 space-y-4">
-                    <h3 class="text-[#9acb03] text-xs font-semibold tracking-widest uppercase flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        SEO & Open Graph Settings
-                    </h3>
-                    <div class="grid grid-cols-1 gap-4">
-                        <div>
-                            <div class="flex justify-between mb-1.5">
-                                <label class="text-white/40 text-xs">Meta Title <span class="text-white/20">(max 60 karakter)</span></label>
-                                <span id="mtitle-counter" class="char-counter text-white/30">0/60</span>
-                            </div>
-                            <input type="text" name="meta_title" id="meta-title-input" value="{{ old('meta_title') }}" maxlength="255"
-                                   class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all"
-                                   placeholder="Judul SEO (kosongkan = auto dari judul artikel)">
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1.5">
-                                <label class="text-white/40 text-xs">Meta Description <span class="text-white/20">(ideal 150-160 karakter)</span></label>
-                                <span id="mdesc-counter" class="char-counter text-white/30">0/160</span>
-                            </div>
-                            <textarea name="meta_description" id="meta-desc-input" rows="2" maxlength="320"
-                                      class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all resize-none"
-                                      placeholder="Deskripsi untuk Google snippet (kosongkan = auto dari excerpt)...">{{ old('meta_description') }}</textarea>
-                        </div>
-                        <div>
-                            <label class="block text-white/40 text-xs mb-1.5">Keywords <span class="text-white/20">(pisah dengan koma)</span></label>
-                            <input type="text" name="meta_keywords" value="{{ old('meta_keywords') }}"
-                                   class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all"
-                                   placeholder="digital marketing, jasa website surabaya, SEO">
-                        </div>
-                        {{-- OG Image --}}
-                        <div class="border-t border-white/5 pt-4">
-                            <label class="block text-white/40 text-xs mb-1.5">
-                                OG Image <span class="text-white/20">(untuk share WhatsApp, Facebook — ideal 1200×630px)</span>
-                            </label>
-                            <div class="border-2 border-dashed border-white/10 rounded-xl p-4 text-center hover:border-[#9acb03]/30 transition-colors" id="og-drop-zone">
-                                <svg class="w-8 h-8 text-white/20 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                <p class="text-white/30 text-xs mb-2">Klik atau drag gambar ke sini</p>
-                                <input type="file" name="og_image" id="og-image-input" accept="image/*"
-                                       class="hidden" onchange="previewOgImage(this)">
-                                <label for="og-image-input" class="cursor-pointer text-xs px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white/50 transition-all">
-                                    Pilih Gambar OG
-                                </label>
-                            </div>
-                            <div id="og-preview" class="mt-3 hidden">
-                                <img id="og-preview-img" src="" alt="OG Preview" class="w-full max-w-sm rounded-xl opacity-80">
-                                <p class="text-white/30 text-xs mt-1">Preview OG Image (1200×630)</p>
-                            </div>
-                        </div>
-                    </div>
-                    {{-- SERP Preview --}}
-                    <div class="bg-white/3 rounded-xl p-4 border border-white/5">
-                        <p class="text-white/30 text-[10px] uppercase tracking-widest mb-3 font-medium">Google SERP Preview</p>
-                        <div class="text-blue-400 text-base font-medium leading-tight mb-1" id="serp-title">Judul Artikel Anda</div>
-                        <div class="text-green-500 text-xs mb-1">hvm-digital.id › artikel › <span id="serp-slug">slug-artikel</span></div>
-                        <div class="text-gray-300 text-sm font-light leading-relaxed" id="serp-desc">Meta description akan tampil di sini...</div>
-                    </div>
-                </div>
+        {{-- Main Editor Card --}}
+        <div class="bg-[#111827] border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
+            
+            {{-- Tabs Navigation --}}
+            <div class="flex items-center border-b border-white/5 px-2 pt-2 overflow-x-auto">
+                <button type="button" onclick="switchTab('content')" id="tab-btn-content" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 transition-all text-[#9acb03] border-[#9acb03]">Content</button>
+                <button type="button" onclick="switchTab('media')" id="tab-btn-media" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 transition-all text-white/50 border-transparent hover:text-white">Media</button>
+                <button type="button" onclick="switchTab('tags')" id="tab-btn-tags" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 transition-all text-white/50 border-transparent hover:text-white">Tags & Status</button>
+                <button type="button" onclick="switchTab('seo')" id="tab-btn-seo" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 transition-all text-white/50 border-transparent hover:text-white">SEO</button>
             </div>
 
-            {{-- ===== SIDEBAR ===== --}}
-            <div class="space-y-5">
-                {{-- Publish --}}
-                <div class="bg-[#0d1f15] border border-white/5 rounded-2xl p-6 space-y-4">
-                    <h3 class="text-white/50 text-xs font-medium tracking-widest uppercase">Publish</h3>
-                    <div>
-                        <label class="block text-white/40 text-xs mb-1.5">Penulis / Author (Opsional)</label>
-                        <input type="text" name="author_name" value="{{ old('author_name', session('admin_name', '')) }}"
-                               class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all"
-                               placeholder="Nama Penulis">
-                    </div>
-                    <div>
-                        <label class="block text-white/40 text-xs mb-1.5">Status</label>
-                        <select name="status" class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
-                            <option value="draft" {{ old('status')=='draft'?'selected':'' }}>📋 Draft</option>
-                            <option value="published" {{ old('status')=='published'?'selected':'' }}>🚀 Published</option>
-                        </select>
-                    </div>
-                    <div>
-                        <div class="flex items-center justify-between mb-1.5">
-                            <label class="text-xs font-medium" style="color:#374151;">Kategori Artikel</label>
-                            <button type="button" onclick="suggestCategories()" id="btn-suggest-cat"
-                                style="background:#f0fdf4;border:1px solid #9acb03;color:#075749;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .2s;">
-                                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                AI Sarankan
-                            </button>
-                        </div>
-                        <select name="article_category_id" id="category-select" required class="form-select">
-                            <option value="">— Pilih Kategori —</option>
-                            @foreach($categories as $parent)
-                            <optgroup label="{{ $parent->name }}">
-                                <option value="{{ $parent->id }}" {{ old('article_category_id') == $parent->id ? 'selected' : '' }}>
-                                    ★ {{ $parent->name }}
-                                </option>
-                                @foreach($parent->children as $child)
-                                <option value="{{ $child->id }}" {{ old('article_category_id') == $child->id ? 'selected' : '' }}>
-                                    — {{ $child->name }}
-                                </option>
-                                @endforeach
-                            </optgroup>
-                            @endforeach
-                        </select>
+            {{-- Tab Contents --}}
+            <div class="p-6 md:p-8">
 
-                        {{-- Smart Suggestion Box --}}
-                        <div id="cat-suggestions" class="hidden mt-3">
-                            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9ca3af;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-                                <svg width="11" height="11" fill="none" stroke="#9acb03" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                Saran Kategori Relevan
+                {{-- TAB: CONTENT --}}
+                <div id="tab-content" class="tab-pane block space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-white/70 text-sm font-medium mb-2">Title <span class="text-red-500">*</span></label>
+                            <input type="text" name="title" id="title-input" value="{{ old('title') }}" required
+                                   class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-white/70 text-sm font-medium mb-2">Slug <span class="text-red-500">*</span></label>
+                            <input type="text" name="slug" id="slug-input" value="{{ old('slug') }}" required
+                                   class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
+                        </div>
+                        
+                        <div class="relative">
+                            <label class="block text-white/70 text-sm font-medium mb-2">Category</label>
+                            <div class="flex gap-2">
+                                <select name="article_category_id" id="category-select" required class="flex-1 bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
+                                    <option value="">— Pilih Kategori —</option>
+                                    @foreach($categories as $parent)
+                                    <optgroup label="{{ $parent->name }}" class="bg-[#111827] text-white">
+                                        <option value="{{ $parent->id }}" {{ old('article_category_id') == $parent->id ? 'selected' : '' }} class="font-bold text-[#9acb03]">
+                                            {{ $parent->name }}
+                                        </option>
+                                        @foreach($parent->children as $child)
+                                        <option value="{{ $child->id }}" {{ old('article_category_id') == $child->id ? 'selected' : '' }} class="pl-4">
+                                            — {{ $child->name }}
+                                        </option>
+                                        @endforeach
+                                    </optgroup>
+                                    @endforeach
+                                </select>
+                                <button type="button" onclick="suggestCategories()" id="btn-suggest-cat" class="bg-white/5 border border-white/10 hover:bg-white/10 text-[#9acb03] text-xs font-semibold px-4 rounded-xl transition-all flex items-center justify-center min-w-[110px]" title="AI akan menyarankan kategori berdasarkan Judul & Excerpt">
+                                    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="mr-1.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                    AI Sarankan
+                                </button>
                             </div>
-                            <div id="cat-suggestion-list"></div>
-                            <p style="font-size:10px;color:#9ca3af;margin-top:4px;">Klik untuk langsung memilih kategori</p>
+                            
+                            {{-- AI Suggestions Popup --}}
+                            <div id="cat-suggestions" class="hidden absolute top-full left-0 right-0 mt-2 z-50 bg-[#1f2937] border border-[#9acb03]/30 rounded-xl p-2 shadow-2xl overflow-hidden">
+                                <div class="px-2 py-1.5 flex items-center justify-between border-b border-white/10 mb-2">
+                                    <span class="text-[10px] uppercase tracking-wider text-[#9acb03] font-bold flex items-center gap-1.5">
+                                        <svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg> Rekomendasi AI
+                                    </span>
+                                    <button type="button" onclick="document.getElementById('cat-suggestions').classList.add('hidden')" class="text-white/30 hover:text-white transition-colors">
+                                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </div>
+                                <div id="cat-suggestion-list" class="space-y-1"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-white/70 text-sm font-medium mb-2">Author</label>
+                            <input type="text" name="author_name" value="{{ old('author_name', session('admin_name', '')) }}"
+                                   class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all" placeholder="Nama Penulis">
                         </div>
                     </div>
-                    <div class="flex gap-3 pt-2">
-                        <a href="{{ route('admin.articles.index') }}"
-                           class="flex-1 text-center border border-white/10 text-white/50 font-light text-sm px-4 py-3 rounded-xl hover:border-white/20 transition-all">
-                            Batal
-                        </a>
-                        <button type="submit"
-                                class="flex-1 text-[#053d33] font-semibold text-sm px-4 py-3 rounded-xl hover:scale-105 transition-all"
-                                style="background: linear-gradient(135deg, #9acb03, #b8e832);">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg> Simpan
-                        </button>
+
+                    <div class="mt-8">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="text-white/70 text-sm font-medium">Content</label>
+                            <div class="flex gap-2">
+                                <button type="button" id="btn-visual" onclick="switchEditor('visual')"
+                                        class="text-xs px-3 py-1.5 rounded-lg bg-white text-black font-semibold shadow-sm transition-all">
+                                    👁 Visual Editor
+                                </button>
+                                <button type="button" id="btn-html" onclick="switchEditor('html')"
+                                        class="text-xs px-3 py-1.5 rounded-lg bg-[#1f2937] text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium">
+                                    &lt;/&gt; HTML / Code
+                                </button>
+                            </div>
+                        </div>
+                        
+                        {{-- Visual Editor (Quill) --}}
+                        <div id="visual-editor-wrap" class="rounded-xl overflow-hidden border border-white/10">
+                            <div id="editor-container" class="prose max-w-none" style="background: #ffffff; color: #111827; min-height: 500px; font-size: 15px; font-family: 'Montserrat', sans-serif;">
+                                {!! old('content') !!}
+                            </div>
+                        </div>
+
+                        {{-- Raw HTML Editor --}}
+                        <div id="html-editor-wrap" class="hidden rounded-xl overflow-hidden border border-white/10">
+                            <textarea id="content-raw" rows="25"
+                                      class="w-full bg-[#0a0a0a] text-[#9acb03] font-mono text-xs p-6 focus:outline-none resize-y leading-relaxed"></textarea>
+                        </div>
+                        <input type="hidden" name="content" id="content-input">
                     </div>
                 </div>
 
-                {{-- Featured Image --}}
-                <div class="bg-[#0d1f15] border border-white/5 rounded-2xl p-6 space-y-3">
-                    <h3 class="text-white/50 text-xs font-medium tracking-widest uppercase">Featured Image & Penamaan SEO</h3>
+                {{-- TAB: MEDIA --}}
+                <div id="tab-media" class="tab-pane hidden space-y-6">
+                    <div>
+                        <label class="block text-white/70 text-sm font-medium mb-4">Thumbnail (Featured Image)</label>
+                        
+                        <div class="border-2 border-dashed border-white/10 bg-[#1f2937]/50 rounded-xl p-8 text-center hover:border-[#9acb03]/50 transition-colors cursor-pointer" onclick="document.getElementById('featured-img-input').click()">
+                            <input type="file" name="featured_image" id="featured-img-input" accept="image/*" class="hidden" onchange="previewFeaturedImage(this)">
+                            <div class="text-white/40 mb-2">
+                                <svg class="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                <p class="text-sm">Klik untuk upload gambar baru</p>
+                                <p class="text-[10px] mt-1 uppercase tracking-wider">Format: JPG, PNG, WEBP</p>
+                            </div>
+                        </div>
+                        <div id="featured-preview" class="hidden mt-4">
+                            <img id="featured-preview-img" src="" alt="Preview" class="max-w-2xl w-full rounded-xl border border-white/10">
+                        </div>
+                    </div>
                     
+                    <div class="pt-4 border-t border-white/5">
+                        <label class="block text-white/70 text-sm font-medium mb-2">Custom Filename (Alt Text)</label>
+                        <input type="text" name="custom_filename" value="{{ old('custom_filename') }}" placeholder="Contoh: distributor-tenaga-surya-terlengkap" 
+                               class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
+                        <p class="text-white/30 text-xs mt-2">Deskripsi gambar untuk SEO dan aksesibilitas. Otomatis men-generate nama file baru saat upload.</p>
+                    </div>
+                </div>
+
+                {{-- TAB: TAGS & STATUS --}}
+                <div id="tab-tags" class="tab-pane hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-white/70 text-sm font-medium mb-2">Status Publikasi</label>
+                            <select name="status" class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
+                                <option value="draft" {{ old('status')=='draft'?'selected':'' }}>Draft (Sembunyikan)</option>
+                                <option value="published" {{ old('status')=='published'?'selected':'' }}>Published (Tampilkan ke Publik)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-white/70 text-sm font-medium mb-2">Tanggal Publikasi</label>
+                            <div class="w-full bg-[#1f2937] border border-white/5 text-white/50 font-mono text-sm px-4 py-3 rounded-xl">
+                                Akan diset otomatis saat disimpan
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-white/5">
+                        <label class="block text-white/70 text-sm font-medium mb-2">Excerpt (Ringkasan Artikel)</label>
+                        <textarea name="excerpt" id="excerpt-input" rows="4" maxlength="500"
+                                  class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all resize-none"
+                                  placeholder="Ringkasan singkat artikel...">{{ old('excerpt') }}</textarea>
+                    </div>
+
+                    <div class="pt-4 border-t border-white/5">
+                        <div class="flex items-center justify-between mb-4">
+                            <label class="text-white/70 text-sm font-medium">FAQ (Frequently Asked Questions)</label>
+                            <button type="button" onclick="addFaqRow()" class="text-xs px-4 py-2 rounded-lg bg-[#1f2937] text-white/70 hover:bg-white/10 transition-all border border-white/10">
+                                + Tambah FAQ
+                            </button>
+                        </div>
+                        <div id="faq-container" class="space-y-4">
+                            @php $oldFaqs = old('faqs', []); @endphp
+                            @foreach($oldFaqs as $index => $faq)
+                            <div class="faq-row bg-[#1f2937]/50 border border-white/10 rounded-xl p-5 relative">
+                                <button type="button" onclick="this.closest('.faq-row').remove()" class="absolute top-4 right-4 text-white/20 hover:text-red-400 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                                <input type="text" name="faqs[{{ $index }}][question]" value="{{ $faq['question'] ?? '' }}" placeholder="Pertanyaan FAQ..." class="w-full bg-transparent border-b border-white/10 text-white font-medium text-sm px-0 py-2 focus:outline-none focus:border-[#9acb03]/50 transition-all mb-4">
+                                <textarea name="faqs[{{ $index }}][answer]" rows="2" placeholder="Jawaban FAQ..." class="w-full bg-transparent border-b border-white/10 text-white/70 font-light text-sm px-0 py-2 focus:outline-none focus:border-[#9acb03]/50 transition-all resize-y"></textarea>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+
+                {{-- TAB: SEO --}}
+                <div id="tab-seo" class="tab-pane hidden space-y-6">
                     <div>
-                        <label class="block text-white/70 text-xs font-medium mb-1.5">Nama File Gambar <span class="text-white/30">(Opsional)</span></label>
-                        <input type="text" name="custom_filename" value="{{ old('custom_filename') }}" placeholder="contoh: artikel-tips-seo" class="w-full bg-[#0a1f12] border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:border-[#9acb03] transition-all outline-none">
-                        <span class="text-white/20 text-[10px] mt-1 block">Jika kosong, otomatis di-generate berdasarkan Judul Artikel. Suffix -og otomatis ditambahkan ke gambar OG.</span>
+                        <label class="block text-white/70 text-sm font-medium mb-2">Meta Title</label>
+                        <input type="text" name="meta_title" id="meta-title-input" value="{{ old('meta_title') }}" maxlength="255"
+                               class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all" placeholder="Kosongkan untuk otomatis menggunakan Judul">
+                    </div>
+                    <div>
+                        <label class="block text-white/70 text-sm font-medium mb-2">Meta Description</label>
+                        <textarea name="meta_description" id="meta-desc-input" rows="3" maxlength="320"
+                                  class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all resize-none" placeholder="Kosongkan untuk otomatis menggunakan Excerpt">{{ old('meta_description') }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-white/70 text-sm font-medium mb-2">Meta Keywords</label>
+                        <input type="text" name="meta_keywords" value="{{ old('meta_keywords') }}"
+                               class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all" placeholder="keyword1, keyword2, keyword3">
+                    </div>
+                    
+                    <div class="pt-4 border-t border-white/5">
+                        <label class="block text-white/70 text-sm font-medium mb-4">OG Image (Sosial Media Share)</label>
+                        <div class="border-2 border-dashed border-white/10 bg-[#1f2937]/50 rounded-xl p-6 text-center hover:border-[#9acb03]/50 transition-colors cursor-pointer" onclick="document.getElementById('og-image-input').click()">
+                            <input type="file" name="og_image" id="og-image-input" accept="image/*" class="hidden" onchange="previewOgImage(this)">
+                            <div class="text-white/40">
+                                <p class="text-sm">Upload gambar OG kustom (Opsional)</p>
+                                <p class="text-[10px] mt-1 uppercase tracking-wider">Rekomendasi ukuran: 1200x630px</p>
+                            </div>
+                        </div>
+                        <div id="og-preview" class="hidden mt-4">
+                            <img id="og-preview-img" src="" alt="OG Preview" class="max-w-md w-full rounded-xl border border-white/10">
+                        </div>
                     </div>
 
-                    <div id="featured-preview" class="hidden">
-                        <img id="featured-preview-img" src="" alt="Preview" class="w-full rounded-xl opacity-80 mb-2">
+                    <div class="pt-4 border-t border-white/5">
+                        <label class="block text-white/70 text-sm font-medium mb-4">Google SERP Preview</label>
+                        <div class="bg-white rounded-xl p-5 border border-gray-200 w-full max-w-2xl">
+                            <div class="text-[#1a0dab] text-[20px] leading-tight mb-1 font-normal truncate" id="serp-title">Preview Title Akan Tampil Di Sini</div>
+                            <div class="text-[#006621] text-[14px] leading-tight mb-1 truncate">hvm-digital.id › artikel › <span id="serp-slug">slug-akan-tampil-di-sini</span></div>
+                            <div class="text-[#545454] text-[14px] leading-snug line-clamp-2" id="serp-desc">Preview Meta Description atau excerpt yang akan ditampilkan oleh Google di hasil pencarian. Pastikan kata-kata awal menarik.</div>
+                        </div>
                     </div>
-                    <div class="border-2 border-dashed border-white/10 rounded-xl p-4 text-center hover:border-[#9acb03]/30 transition-colors">
-                        <input type="file" name="featured_image" id="featured-img-input" accept="image/*"
-                               class="hidden" onchange="previewFeaturedImage(this)">
-                        <label for="featured-img-input" class="cursor-pointer block">
-                            <svg class="w-8 h-8 text-white/20 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            <span class="text-white/30 text-xs">Klik untuk upload gambar utama</span>
-                        </label>
-                    </div>
-                    <p class="text-white/20 text-[11px] font-light">Auto convert ke WebP. Digunakan sebagai thumbnail artikel.</p>
                 </div>
 
-                {{-- SEO Checklist --}}
-                <div class="bg-[#0d1f15] border border-white/5 rounded-2xl p-6">
-                    <h3 class="text-white/50 text-xs font-medium tracking-widest uppercase mb-4">SEO Checklist</h3>
-                    <ul class="space-y-2 text-xs" id="seo-checklist">
-                        <li class="flex gap-2 items-center" id="check-title"><span>⬜</span> <span class="text-white/40">Judul artikel diisi</span></li>
-                        <li class="flex gap-2 items-center" id="check-excerpt"><span>⬜</span> <span class="text-white/40">Excerpt / ringkasan diisi</span></li>
-                        <li class="flex gap-2 items-center" id="check-meta-title"><span>⬜</span> <span class="text-white/40">Meta title diisi</span></li>
-                        <li class="flex gap-2 items-center" id="check-meta-desc"><span>⬜</span> <span class="text-white/40">Meta description diisi</span></li>
-                        <li class="flex gap-2 items-center" id="check-keywords"><span>⬜</span> <span class="text-white/40">Keywords diisi</span></li>
-                        <li class="flex gap-2 items-center" id="check-image"><span>⬜</span> <span class="text-white/40">Featured image diupload</span></li>
-                        <li class="flex gap-2 items-center" id="check-og"><span>⬜</span> <span class="text-white/40">OG image diupload</span></li>
-                    </ul>
-                </div>
             </div>
+        </div>
+
+        {{-- Fixed Bottom Actions --}}
+        <div class="mt-8 flex gap-4 pb-12">
+            <button type="submit" class="bg-[#9acb03] hover:bg-[#86b303] text-[#053d33] font-bold text-sm px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-[#9acb03]/20">
+                Simpan & Publish
+            </button>
+            <a href="{{ route('admin.articles.index') }}" class="bg-[#1f2937] hover:bg-[#374151] text-white/70 font-medium text-sm px-8 py-3.5 rounded-xl transition-all border border-white/10">
+                Batal
+            </a>
         </div>
     </form>
 </div>
+
+<style>
+/* Quill Overrides for this layout */
+.ql-toolbar.ql-snow {
+    background: #f8fafc;
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 12px 16px;
+    font-family: inherit;
+}
+.ql-container.ql-snow {
+    border: none;
+}
+.ql-editor {
+    padding: 40px;
+    line-height: 1.8;
+}
+.ql-editor h1 { font-size: 2.25em; font-weight: 800; margin-top: 1.5em; margin-bottom: 0.8em; color: #000; line-height: 1.2; }
+.ql-editor h2 { font-size: 1.75em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.8em; color: #000; line-height: 1.3; }
+.ql-editor h3 { font-size: 1.35em; font-weight: 700; margin-top: 1.2em; margin-bottom: 0.6em; color: #111827; line-height: 1.4; }
+.ql-editor p { margin-bottom: 1.2em; }
+.ql-editor ul, .ql-editor ol { margin-bottom: 1.2em; padding-left: 1.5em; }
+.ql-editor li { margin-bottom: 0.5em; }
+.ql-editor a { color: #075749; text-decoration: underline; font-weight: 600; }
+.ql-editor blockquote { border-left: 4px solid #9acb03; padding-left: 1rem; color: #4b5563; font-style: italic; margin: 1.5em 0; }
+</style>
 
 @push('scripts')
 <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <script>
+// Tab Logic
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('text-[#9acb03]', 'border-[#9acb03]');
+        el.classList.add('text-white/50', 'border-transparent');
+    });
+
+    document.getElementById('tab-' + tabId).classList.remove('hidden');
+    const btn = document.getElementById('tab-btn-' + tabId);
+    btn.classList.remove('text-white/50', 'border-transparent');
+    btn.classList.add('text-[#9acb03]', 'border-[#9acb03]');
+}
+
+// Editor Logic
 let quill;
 let currentMode = 'visual';
 
@@ -398,17 +351,13 @@ function switchEditor(mode) {
         visualWrap.classList.add('hidden');
         htmlWrap.classList.remove('hidden');
         btnHtml.className   = 'text-xs px-3 py-1.5 rounded-lg bg-white text-black font-semibold shadow-sm transition-all';
-        btnVisual.className = 'text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium';
-        
-        // Sync Visual to HTML
+        btnVisual.className = 'text-xs px-3 py-1.5 rounded-lg bg-[#1f2937] text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium';
         rawInput.value = quill.root.innerHTML;
     } else {
         htmlWrap.classList.add('hidden');
         visualWrap.classList.remove('hidden');
         btnVisual.className = 'text-xs px-3 py-1.5 rounded-lg bg-white text-black font-semibold shadow-sm transition-all';
-        btnHtml.className   = 'text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium';
-        
-        // Sync HTML to Visual
+        btnHtml.className   = 'text-xs px-3 py-1.5 rounded-lg bg-[#1f2937] text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium';
         quill.clipboard.dangerouslyPasteHTML(rawInput.value);
     }
 }
@@ -421,168 +370,17 @@ document.getElementById('article-form').addEventListener('submit', function() {
     }
 });
 
-// ─── Character Counters ───────────────────────────────────────────────────────
-function setupCounter(inputId, counterId, max, warnAt) {
-    const input = document.getElementById(inputId);
-    const counter = document.getElementById(counterId);
-    if (!input || !counter) return;
-    function update() {
-        const len = input.value.length;
-        counter.textContent = len + '/' + max;
-        counter.className = 'char-counter ' + (len > max ? 'danger' : len > warnAt ? 'warn' : 'text-white/30');
-    }
-    input.addEventListener('input', update);
-    update();
-}
-
-// ─── SERP Preview ─────────────────────────────────────────────────────────────
-function updateSerp() {
-    const title   = document.getElementById('title-input').value || document.getElementById('meta-title-input').value || 'Judul Artikel Anda';
-    const metaT   = document.getElementById('meta-title-input').value || title;
-    const desc    = document.getElementById('meta-desc-input').value || document.getElementById('excerpt-input').value || 'Meta description akan tampil di sini...';
-    let slug      = document.getElementById('slug-input').value.trim();
-    if(!slug) {
-        slug = title.toLowerCase().replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,'-').substring(0,60);
-    }
-
-    document.getElementById('serp-title').textContent  = metaT.substring(0, 60);
-    document.getElementById('serp-desc').textContent   = desc.substring(0, 160);
-    document.getElementById('serp-slug').textContent   = slug;
-}
-
-// ─── Image Previews ───────────────────────────────────────────────────────────
-function previewFeaturedImage(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            document.getElementById('featured-preview-img').src = e.target.result;
-            document.getElementById('featured-preview').classList.remove('hidden');
-            document.getElementById('check-image').innerHTML = '<svg class="w-5 h-5 text-[#9acb03] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> <span class="text-green-400">Featured image diupload</span>';
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function previewOgImage(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            document.getElementById('og-preview-img').src = e.target.result;
-            document.getElementById('og-preview').classList.remove('hidden');
-            document.getElementById('check-og').innerHTML = '<svg class="w-5 h-5 text-[#9acb03] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> <span class="text-green-400">OG image diupload</span>';
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-// ─── SEO Checklist ────────────────────────────────────────────────────────────
-function updateChecklist() {
-    const checks = {
-        'check-title':     !!document.getElementById('title-input').value.trim(),
-        'check-excerpt':   !!document.getElementById('excerpt-input').value.trim(),
-        'check-meta-title':!!document.getElementById('meta-title-input').value.trim(),
-        'check-meta-desc': !!document.getElementById('meta-desc-input').value.trim(),
-        'check-keywords':  !!document.querySelector('[name="meta_keywords"]').value.trim(),
-    };
-    const labels = {
-        'check-title':     'Judul artikel diisi',
-        'check-excerpt':   'Excerpt / ringkasan diisi',
-        'check-meta-title':'Meta title diisi',
-        'check-meta-desc': 'Meta description diisi',
-        'check-keywords':  'Keywords diisi',
-    };
-    for (const [id, ok] of Object.entries(checks)) {
-        document.getElementById(id).innerHTML = ok
-            ? `<svg class="w-5 h-5 text-[#9acb03] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> <span class="text-green-400">${labels[id]}</span>`
-            : `<span>⬜</span> <span class="text-white/40">${labels[id]}</span>`;
-    }
-}
-
-// ─── Init ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-    initEditor();
-    setupCounter('excerpt-input',   'excerpt-counter', 500, 400);
-    setupCounter('meta-title-input','mtitle-counter',   60,  50);
-    setupCounter('meta-desc-input', 'mdesc-counter',   160, 130);
-
-    ['title-input','slug-input','excerpt-input','meta-title-input','meta-desc-input'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.addEventListener('input', () => { updateSerp(); updateChecklist(); }); }
+// Category Auto Suggestion AI Logic
+const FLAT_CATS = @json(collect($categories)->flatMap(function($p){
+    return collect([$p])->concat($p->children)->map(function($c) use ($p) {
+        return ['id'=>$c->id, 'fullname'=> $c->parent_id ? $p->name.' - '.$c->name : $c->name];
     });
-    document.querySelector('[name="meta_keywords"]').addEventListener('input', updateChecklist);
-    updateSerp(); updateChecklist();
-    initCategoryData();
-});
+})->values());
 
-// ─── Smart Category Suggester ────────────────────────────────────────────────
-const ALL_CATEGORIES = {!! $catJson !!};
-
-// Flatten all categories to [{id, name, fullname}]
-const FLAT_CATS = [];
-function initCategoryData() {
-    ALL_CATEGORIES.forEach(p => {
-        FLAT_CATS.push({ id: p.id, name: p.name, fullname: p.name });
-        (p.children||[]).forEach(c => {
-            FLAT_CATS.push({ id: c.id, name: c.name, fullname: p.name + ' › ' + c.name });
-        });
-    });
-}
-
-// Stop words Indonesia
-const STOP_WORDS = new Set(['dan','yang','untuk','dengan','dari','ini','itu','atau','juga','akan','sudah','bisa','ada','dalam','pada','tidak','lebih','cara','setiap','secara','kita','mari','mereka','apa','bagaimana','kenapa','oleh','saat','jika','agar','kami','anda','kamu','saya','kini','baru','serta','namun','tapi','karena','sebuah','semua','per','bagi','hingga','sejak','antara','tanpa','setelah','sebelum','menjadi','sebagai','sangat','hanya','jadi','satu','dua','tiga','lagi','masih','terus','paling','kali','bulan','tahun','hari','betapa','total','banyak','mari','hitung','jujur','transparan','kembali']);
-
-// Semantic mapping: kata kunci artikel → keywords yang relevan di nama kategori
+const STOP_WORDS = new Set(['yang','di','ke','dari','dan','atau','dengan','untuk','ini','itu','juga','bisa','ada','dalam','tidak','akan']);
 const SEMANTIC_MAP = {
-    // E-Commerce / Marketplace
-    'shopee':['brand','fashion','toko','olshop','distributor','konveksi','retail'],
-    'tokopedia':['brand','fashion','toko','olshop','distributor'],
-    'lazada':['brand','fashion','toko','olshop','distributor'],
-    'marketplace':['brand','fashion','toko','olshop','distributor'],
-    'seller':['brand','fashion','toko','olshop','distributor','retail'],
-    'biaya':['brand','startup','distributor','bisnis'],
-    'margin':['brand','startup','distributor','trader'],
-    'omzet':['brand','startup','distributor','kuliner'],
-    // Digital
-    'website':['konsultan','startup','teknologi','media'],
-    'seo':['konsultan','startup','teknologi','media'],
-    'digital':['konsultan','startup','teknologi','media'],
-    'marketing':['konsultan','startup','media','brand'],
-    'google':['konsultan','startup','teknologi'],
-    'iklan':['konsultan','media','brand'],
-    'branding':['brand','fashion','konsultan'],
-    'traffic':['konsultan','startup','teknologi'],
-    // Fashion
-    'fashion':['fashion','brand','konveksi','busana','pakaian'],
-    'baju':['fashion','brand','konveksi','pakaian'],
-    'gamis':['busana','muslim','fashion'],
-    'hijab':['busana','muslim','fashion'],
-    'sepatu':['sepatu','aksesori','fashion'],
-    // Skincare
-    'skincare':['skincare','kecantikan','kosmetik'],
-    'kosmetik':['skincare','kecantikan','kosmetik'],
-    // Kuliner
-    'kuliner':['kuliner','restoran','kafe','katering','bakery'],
-    'makanan':['kuliner','restoran','kafe','katering'],
-    'minuman':['kuliner','kafe','boba','minuman'],
-    'kafe':['kafe','coffee','kuliner'],
-    'resto':['restoran','kuliner','kafe'],
-    'catering':['katering','kuliner','boga'],
-    // Properti
-    'properti':['properti','developer','agen','kontraktor'],
-    'rumah':['properti','developer','renovasi'],
-    'kontraktor':['kontraktor','properti','renovasi'],
-    // Kesehatan
-    'dokter':['klinik','umum','fisioterapi'],
-    'apotek':['apotek','obat','kesehatan'],
-    // Pendidikan
-    'kursus':['kursus','bimbel','pelatihan'],
-    'bimbel':['bimbel','kursus','les'],
-    // Otomotif
-    'mobil':['bengkel','dealer','rental','modifikasi'],
-    'motor':['bengkel','dealer','aksesori'],
-    // Startup/Tech
-    'startup':['startup','scaleup','teknologi','saas'],
-    'teknologi':['teknologi','startup','saas','konsultan'],
+    'ai':['ai','artificial intelligence','kecerdasan buatan','machine learning'],
+    'startup':['startup','bisnis','inovasi','founder','digital'],
     'fintech':['fintech','keuangan','startup'],
 };
 
@@ -598,15 +396,9 @@ function scoreCategory(catFullname, articleTokens) {
     const catWords = catLower.split(/\s+/).filter(w => w.length >= 3);
     let score = 0;
     articleTokens.forEach(token => {
-        // Exact word match dengan nama kategori — skor tertinggi
-        catWords.forEach(cw => {
-            if (cw === token) score += 5;
-        });
-        // Semantic mapping
+        catWords.forEach(cw => { if (cw === token) score += 5; });
         const semanticWords = SEMANTIC_MAP[token] || [];
-        semanticWords.forEach(sw => {
-            if (catLower.includes(sw)) score += 2;
-        });
+        semanticWords.forEach(sw => { if (catLower.includes(sw)) score += 2; });
     });
     return score;
 }
@@ -623,20 +415,16 @@ function suggestCategories() {
     }
 
     const tokens = tokenize(combined);
-
-    // Score all categories
-    const scored = FLAT_CATS.map(cat => ({
-        ...cat,
-        score: scoreCategory(cat.fullname, tokens)
-    })).filter(c => c.score > 0)
-       .sort((a,b) => b.score - a.score)
-       .slice(0, 4);
+    const scored = FLAT_CATS.map(cat => ({ ...cat, score: scoreCategory(cat.fullname, tokens) }))
+        .filter(c => c.score > 0)
+        .sort((a,b) => b.score - a.score)
+        .slice(0, 4);
 
     const box  = document.getElementById('cat-suggestions');
     const list = document.getElementById('cat-suggestion-list');
 
     if (scored.length === 0) {
-        list.innerHTML = '<p style="font-size:12px;color:#9ca3af;padding:8px 0;">Tidak ada kategori yang cocok. Coba tambahkan kata kunci di judul atau excerpt.</p>';
+        list.innerHTML = '<p class="text-white/30 text-xs py-2">Tidak ada kategori yang cocok. Coba tambahkan kata kunci.</p>';
         box.classList.remove('hidden');
         return;
     }
@@ -646,24 +434,21 @@ function suggestCategories() {
         const pct = Math.round((cat.score / maxScore) * 100);
         const isTop = i === 0;
         return `
-        <div class="cat-suggestion-item ${isTop?'top-pick':''}" onclick="selectCategory(${cat.id})">
-            <div style="flex:1;min-width:0;">
-                ${ isTop ? '<span style="font-size:9px;background:#9acb03;color:#053d33;padding:1px 6px;border-radius:10px;font-weight:700;margin-right:4px;">TOP</span>' : '' }
-                <span style="font-size:12px;font-weight:${isTop?'600':'400'};color:#111827;">${cat.fullname}</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-                <span style="font-size:11px;color:#075749;font-weight:600;">${pct}%</span>
-                <div class="cat-score-bar"><div class="cat-score-fill" style="width:${pct}%"></div></div>
+        <div class="hover:bg-white/5 p-2 rounded cursor-pointer transition-colors" onclick="selectCategory(${cat.id})">
+            <div class="flex items-center justify-between">
+                <span class="text-sm ${isTop ? 'text-white font-semibold' : 'text-white/70'}">
+                    ${isTop ? '<span class="text-[#9acb03] text-[10px] mr-1 uppercase">Top Pick</span>' : ''}
+                    ${cat.fullname}
+                </span>
+                <span class="text-xs text-[#9acb03]">${pct}% match</span>
             </div>
         </div>`;
     }).join('');
 
     box.classList.remove('hidden');
-
-    // Auto-suggest animation on button
     const btn = document.getElementById('btn-suggest-cat');
-    btn.textContent = '✓ Dianalisis!';
-    setTimeout(() => { btn.innerHTML = '<svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> AI Sarankan'; }, 1500);
+    btn.innerHTML = '✓ Dianalisis!';
+    setTimeout(() => { btn.innerHTML = '<svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="mr-1.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> AI Sarankan'; }, 1500);
 }
 
 function selectCategory(id) {
@@ -671,29 +456,76 @@ function selectCategory(id) {
     if (sel) {
         sel.value = id;
         document.getElementById('cat-suggestions').classList.add('hidden');
-        // Flash green border
         sel.style.borderColor = '#9acb03';
-        sel.style.boxShadow = '0 0 0 3px rgba(154,203,3,0.15)';
-        setTimeout(() => { sel.style.borderColor=''; sel.style.boxShadow=''; }, 1500);
+        setTimeout(() => { sel.style.borderColor=''; }, 1500);
     }
 }
 
-// FAQ Repeater
+// FAQ Logic
 let faqIndex = {{ count(old('faqs', [])) }};
 function addFaqRow() {
     const container = document.getElementById('faq-container');
     const row = document.createElement('div');
-    row.className = 'faq-row bg-white/5 border border-white/10 rounded-xl p-4 relative';
+    row.className = 'faq-row bg-[#1f2937]/50 border border-white/10 rounded-xl p-5 relative';
     row.innerHTML = `
         <button type="button" onclick="this.closest('.faq-row').remove()" class="absolute top-4 right-4 text-white/20 hover:text-red-400 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
-        <input type="text" name="faqs[${faqIndex}][question]" placeholder="Pertanyaan..." class="w-full bg-transparent border-b border-white/10 text-white font-medium text-sm px-0 py-2 focus:outline-none focus:border-[#9acb03]/50 transition-all mb-3">
-        <textarea name="faqs[${faqIndex}][answer]" rows="2" placeholder="Jawaban..." class="w-full bg-transparent border-b border-white/10 text-white/70 font-light text-sm px-0 py-2 focus:outline-none focus:border-[#9acb03]/50 transition-all resize-none"></textarea>
+        <input type="text" name="faqs[${faqIndex}][question]" placeholder="Pertanyaan FAQ..." class="w-full bg-transparent border-b border-white/10 text-white font-medium text-sm px-0 py-2 focus:outline-none focus:border-[#9acb03]/50 transition-all mb-4">
+        <textarea name="faqs[${faqIndex}][answer]" rows="2" placeholder="Jawaban FAQ..." class="w-full bg-transparent border-b border-white/10 text-white/70 font-light text-sm px-0 py-2 focus:outline-none focus:border-[#9acb03]/50 transition-all resize-y"></textarea>
     `;
     container.appendChild(row);
     faqIndex++;
 }
+
+// Media Previews
+function previewFeaturedImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => { 
+            document.getElementById('featured-preview-img').src = e.target.result; 
+            document.getElementById('featured-preview').classList.remove('hidden'); 
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+function previewOgImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => { 
+            document.getElementById('og-preview-img').src = e.target.result; 
+            document.getElementById('og-preview').classList.remove('hidden'); 
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// SERP Preview
+function updateSerp() {
+    const title  = document.getElementById('title-input').value;
+    const metaT  = document.getElementById('meta-title-input').value || title;
+    const desc   = document.getElementById('meta-desc-input').value || document.getElementById('excerpt-input').value;
+    const slug   = document.getElementById('slug-input').value.trim() || 'slug-artikel';
+    
+    const serpTitle = document.getElementById('serp-title');
+    if (serpTitle) serpTitle.textContent = metaT.substring(0, 60);
+    
+    const serpDesc = document.getElementById('serp-desc');
+    if (serpDesc) serpDesc.textContent  = desc.substring(0, 160);
+    
+    const serpSlug = document.getElementById('serp-slug');
+    if (serpSlug) serpSlug.textContent  = slug;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initEditor();
+    
+    ['title-input','slug-input','excerpt-input','meta-title-input','meta-desc-input'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updateSerp);
+    });
+    updateSerp();
+});
 </script>
 @endpush
 @endsection
