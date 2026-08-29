@@ -2,6 +2,21 @@
 @section('title','Edit — '.$article->title)
 @section('page-title','Edit Artikel')
 
+@push('head')
+<style>
+.cms-card { background: #0d1f15; border: 1px solid rgba(255,255,255,0.06); }
+.cms-input { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; }
+.cms-input:focus { border-color: rgba(154,203,3,0.5); outline: none; }
+.cms-input option { background: #0a1f12; color: #fff; }
+.cms-tab-active { color: #9acb03; border-bottom: 2px solid #9acb03; }
+.cms-tab-inactive { color: rgba(255,255,255,0.5); border-bottom: 2px solid transparent; }
+.cms-tab-inactive:hover { color: rgba(255,255,255,0.8); }
+.char-counter { font-size: 11px; transition: color .2s; }
+.char-counter.warn { color: #f59e0b; }
+.char-counter.danger { color: #ef4444; }
+</style>
+@endpush
+
 @section('content')
 <div class="max-w-6xl mx-auto">
     {{-- Top Bar --}}
@@ -42,14 +57,14 @@
         @csrf @method('PUT')
 
         {{-- Main Editor Card --}}
-        <div class="bg-[#111827] border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
+        <div class="cms-card rounded-2xl overflow-hidden shadow-2xl">
             
             {{-- Tabs Navigation --}}
-            <div class="flex items-center border-b border-white/5 px-2 pt-2 overflow-x-auto">
-                <button type="button" onclick="switchTab('content')" id="tab-btn-content" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 transition-all text-[#9acb03] border-[#9acb03]">Content</button>
-                <button type="button" onclick="switchTab('media')" id="tab-btn-media" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 transition-all text-white/50 border-transparent hover:text-white">Media</button>
-                <button type="button" onclick="switchTab('tags')" id="tab-btn-tags" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 transition-all text-white/50 border-transparent hover:text-white">Tags & Status</button>
-                <button type="button" onclick="switchTab('seo')" id="tab-btn-seo" class="tab-btn px-6 py-4 text-sm font-medium border-b-2 transition-all text-white/50 border-transparent hover:text-white">SEO</button>
+            <div class="flex items-center border-b border-white/5 px-2 pt-2 overflow-x-auto" style="background:#0d1f15">
+                <button type="button" onclick="switchTab('content')" id="tab-btn-content" class="tab-btn cms-tab-active px-6 py-4 text-sm font-medium transition-all">Content</button>
+                <button type="button" onclick="switchTab('media')" id="tab-btn-media" class="tab-btn cms-tab-inactive px-6 py-4 text-sm font-medium transition-all">Media</button>
+                <button type="button" onclick="switchTab('tags')" id="tab-btn-tags" class="tab-btn cms-tab-inactive px-6 py-4 text-sm font-medium transition-all">Tags &amp; Status</button>
+                <button type="button" onclick="switchTab('seo')" id="tab-btn-seo" class="tab-btn cms-tab-inactive px-6 py-4 text-sm font-medium transition-all">SEO</button>
             </div>
 
             {{-- Tab Contents --}}
@@ -61,19 +76,19 @@
                         <div>
                             <label class="block text-white/70 text-sm font-medium mb-2">Title <span class="text-red-500">*</span></label>
                             <input type="text" name="title" id="title-input" value="{{ old('title', $article->title) }}" required
-                                   class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
+                                   class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
                         </div>
                         <div>
                             <label class="block text-white/70 text-sm font-medium mb-2">Slug <span class="text-red-500">*</span></label>
                             <input type="text" name="slug" id="slug-input" value="{{ old('slug', $article->slug) }}" required
-                                   class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
+                                   class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
                         </div>
                         <div>
                             <label class="block text-white/70 text-sm font-medium mb-2">Category</label>
-                            <select name="article_category_id" required class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
+                            <select name="article_category_id" required class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
                                 <option value="">— Pilih Kategori —</option>
                                 @foreach($categories as $parent)
-                                <optgroup label="{{ $parent->name }}" class="bg-[#111827] text-white">
+                                <optgroup label="{{ $parent->name }}" class="bg-[#0d1f15] text-white">
                                     <option value="{{ $parent->id }}" {{ old('article_category_id', $article->article_category_id) == $parent->id ? 'selected' : '' }} class="font-bold text-[#9acb03]">
                                         {{ $parent->name }}
                                     </option>
@@ -89,7 +104,7 @@
                         <div>
                             <label class="block text-white/70 text-sm font-medium mb-2">Author</label>
                             <input type="text" name="author_name" value="{{ old('author_name', $article->author_name ?: session('admin_name', '')) }}"
-                                   class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all" placeholder="Nama Penulis">
+                                   class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all" placeholder="Nama Penulis">
                         </div>
                     </div>
 
@@ -102,7 +117,7 @@
                                     👁 Visual Editor
                                 </button>
                                 <button type="button" id="btn-html" onclick="switchEditor('html')"
-                                        class="text-xs px-3 py-1.5 rounded-lg bg-[#1f2937] text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium">
+                                        class="text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium">
                                     &lt;/&gt; HTML / Code
                                 </button>
                             </div>
@@ -118,7 +133,7 @@
                         {{-- Raw HTML Editor --}}
                         <div id="html-editor-wrap" class="hidden rounded-xl overflow-hidden border border-white/10">
                             <textarea id="content-raw" rows="25"
-                                      class="w-full bg-[#0a0a0a] text-[#9acb03] font-mono text-xs p-6 focus:outline-none resize-y leading-relaxed"></textarea>
+                                      style="background:#0a1f12;color:#9acb03;width:100%;font-family:monospace;font-size:12px;padding:24px;outline:none;resize:vertical;line-height:1.6;display:block;"></textarea>
                         </div>
                         <input type="hidden" name="content" id="content-input">
                     </div>
@@ -138,7 +153,7 @@
                         </div>
                         @endif
 
-                        <div class="border-2 border-dashed border-white/10 bg-[#1f2937]/50 rounded-xl p-8 text-center hover:border-[#9acb03]/50 transition-colors cursor-pointer" onclick="document.getElementById('featured-img-input').click()">
+                        <div class="border-2 border-dashed border-white/10 bg-white/5/50 rounded-xl p-8 text-center hover:border-[#9acb03]/50 transition-colors cursor-pointer" onclick="document.getElementById('featured-img-input').click()">
                             <input type="file" name="featured_image" id="featured-img-input" accept="image/*" class="hidden" onchange="previewFeaturedImage(this)">
                             <div class="text-white/40 mb-2">
                                 <svg class="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -154,7 +169,7 @@
                     <div class="pt-4 border-t border-white/5">
                         <label class="block text-white/70 text-sm font-medium mb-2">Custom Filename (Alt Text)</label>
                         <input type="text" name="custom_filename" value="{{ old('custom_filename') }}" placeholder="Contoh: distributor-tenaga-surya-terlengkap" 
-                               class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
+                               class="cms-input w-full font-light text-sm px-4 py-3 rounded-xl transition-all">
                         <p class="text-white/30 text-xs mt-2">Deskripsi gambar untuk SEO dan aksesibilitas. Otomatis men-generate nama file baru saat upload.</p>
                     </div>
                 </div>
@@ -164,14 +179,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-white/70 text-sm font-medium mb-2">Status Publikasi</label>
-                            <select name="status" class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all">
+                            <select name="status" class="cms-input w-full font-light text-sm px-4 py-3 rounded-xl transition-all">
                                 <option value="draft" {{ old('status',$article->status)=='draft'?'selected':'' }}>Draft (Sembunyikan)</option>
                                 <option value="published" {{ old('status',$article->status)=='published'?'selected':'' }}>Published (Tampilkan ke Publik)</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-white/70 text-sm font-medium mb-2">Total Views</label>
-                            <div class="w-full bg-[#1f2937] border border-white/5 text-white/50 font-mono text-sm px-4 py-3 rounded-xl">
+                            <div class="w-full bg-white/5 border border-white/5 text-white/50 font-mono text-sm px-4 py-3 rounded-xl">
                                 {{ number_format($article->views) }} x dilihat
                             </div>
                         </div>
@@ -180,21 +195,21 @@
                     <div class="pt-4 border-t border-white/5">
                         <label class="block text-white/70 text-sm font-medium mb-2">Excerpt (Ringkasan Artikel)</label>
                         <textarea name="excerpt" id="excerpt-input" rows="4" maxlength="500"
-                                  class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all resize-none"
+                                  class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all resize-none"
                                   placeholder="Ringkasan singkat artikel...">{{ old('excerpt', $article->excerpt) }}</textarea>
                     </div>
 
                     <div class="pt-4 border-t border-white/5">
                         <div class="flex items-center justify-between mb-4">
                             <label class="text-white/70 text-sm font-medium">FAQ (Frequently Asked Questions)</label>
-                            <button type="button" onclick="addFaqRow()" class="text-xs px-4 py-2 rounded-lg bg-[#1f2937] text-white/70 hover:bg-white/10 transition-all border border-white/10">
+                            <button type="button" onclick="addFaqRow()" class="text-xs px-4 py-2 rounded-lg bg-white/5 text-white/70 hover:bg-white/10 transition-all border border-white/10">
                                 + Tambah FAQ
                             </button>
                         </div>
                         <div id="faq-container" class="space-y-4">
                             @php $oldFaqs = old('faqs', is_array($article->faqs) ? $article->faqs : []); @endphp
                             @foreach($oldFaqs as $index => $faq)
-                            <div class="faq-row bg-[#1f2937]/50 border border-white/10 rounded-xl p-5 relative">
+                            <div class="faq-row bg-white/5/50 border border-white/10 rounded-xl p-5 relative">
                                 <button type="button" onclick="this.closest('.faq-row').remove()" class="absolute top-4 right-4 text-white/20 hover:text-red-400 transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
@@ -211,17 +226,17 @@
                     <div>
                         <label class="block text-white/70 text-sm font-medium mb-2">Meta Title</label>
                         <input type="text" name="meta_title" id="meta-title-input" value="{{ old('meta_title', $article->getRawOriginal('meta_title')) }}" maxlength="255"
-                               class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all" placeholder="Kosongkan untuk otomatis menggunakan Judul">
+                               class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all" placeholder="Kosongkan untuk otomatis menggunakan Judul">
                     </div>
                     <div>
                         <label class="block text-white/70 text-sm font-medium mb-2">Meta Description</label>
                         <textarea name="meta_description" id="meta-desc-input" rows="3" maxlength="320"
-                                  class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all resize-none" placeholder="Kosongkan untuk otomatis menggunakan Excerpt">{{ old('meta_description', $article->getRawOriginal('meta_description')) }}</textarea>
+                                  class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all resize-none" placeholder="Kosongkan untuk otomatis menggunakan Excerpt">{{ old('meta_description', $article->getRawOriginal('meta_description')) }}</textarea>
                     </div>
                     <div>
                         <label class="block text-white/70 text-sm font-medium mb-2">Meta Keywords</label>
                         <input type="text" name="meta_keywords" value="{{ old('meta_keywords', $article->meta_keywords) }}"
-                               class="w-full bg-[#1f2937] border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all" placeholder="keyword1, keyword2, keyword3">
+                               class="w-full bg-white/5 border border-white/10 text-white font-light text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all" placeholder="keyword1, keyword2, keyword3">
                     </div>
                     
                     <div class="pt-4 border-t border-white/5">
@@ -231,7 +246,7 @@
                             <img src="{{ get_image_url($article->og_image) }}" alt="OG Image" class="max-w-md w-full rounded-xl border border-white/10">
                         </div>
                         @endif
-                        <div class="border-2 border-dashed border-white/10 bg-[#1f2937]/50 rounded-xl p-6 text-center hover:border-[#9acb03]/50 transition-colors cursor-pointer" onclick="document.getElementById('og-image-input').click()">
+                        <div class="border-2 border-dashed border-white/10 bg-white/5/50 rounded-xl p-6 text-center hover:border-[#9acb03]/50 transition-colors cursor-pointer" onclick="document.getElementById('og-image-input').click()">
                             <input type="file" name="og_image" id="og-image-input" accept="image/*" class="hidden" onchange="previewOgImage(this)">
                             <div class="text-white/40">
                                 <p class="text-sm">Upload gambar OG kustom (Opsional)</p>
@@ -261,7 +276,7 @@
             <button type="submit" class="bg-[#9acb03] hover:bg-[#86b303] text-[#053d33] font-bold text-sm px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-[#9acb03]/20">
                 Simpan Perubahan
             </button>
-            <a href="{{ route('admin.articles.index') }}" class="bg-[#1f2937] hover:bg-[#374151] text-white/70 font-medium text-sm px-8 py-3.5 rounded-xl transition-all border border-white/10">
+            <a href="{{ route('admin.articles.index') }}" class="bg-white/5 hover:bg-[#374151] text-white/70 font-medium text-sm px-8 py-3.5 rounded-xl transition-all border border-white/10">
                 Batal
             </a>
         </div>
@@ -301,20 +316,16 @@
 <script>
 // Tab Logic
 function switchTab(tabId) {
-    // Hide all tab panes
     document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
-    // Reset all tab buttons
     document.querySelectorAll('.tab-btn').forEach(el => {
-        el.classList.remove('text-[#9acb03]', 'border-[#9acb03]');
-        el.classList.add('text-white/50', 'border-transparent');
+        el.classList.remove('cms-tab-active');
+        el.classList.add('cms-tab-inactive');
     });
 
-    // Show active tab pane
     document.getElementById('tab-' + tabId).classList.remove('hidden');
-    // Set active tab button
     const btn = document.getElementById('tab-btn-' + tabId);
-    btn.classList.remove('text-white/50', 'border-transparent');
-    btn.classList.add('text-[#9acb03]', 'border-[#9acb03]');
+    btn.classList.remove('cms-tab-inactive');
+    btn.classList.add('cms-tab-active');
 }
 
 // Editor Logic
@@ -375,13 +386,13 @@ function switchEditor(mode) {
         visualWrap.classList.add('hidden');
         htmlWrap.classList.remove('hidden');
         btnHtml.className   = 'text-xs px-3 py-1.5 rounded-lg bg-white text-black font-semibold shadow-sm transition-all';
-        btnVisual.className = 'text-xs px-3 py-1.5 rounded-lg bg-[#1f2937] text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium';
+        btnVisual.className = 'text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium';
         rawInput.value = quill.root.innerHTML;
     } else {
         htmlWrap.classList.add('hidden');
         visualWrap.classList.remove('hidden');
         btnVisual.className = 'text-xs px-3 py-1.5 rounded-lg bg-white text-black font-semibold shadow-sm transition-all';
-        btnHtml.className   = 'text-xs px-3 py-1.5 rounded-lg bg-[#1f2937] text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium';
+        btnHtml.className   = 'text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium';
         quill.clipboard.dangerouslyPasteHTML(rawInput.value);
     }
 }
@@ -399,7 +410,7 @@ let faqIndex = {{ count(old('faqs', is_array($article->faqs) ? $article->faqs : 
 function addFaqRow() {
     const container = document.getElementById('faq-container');
     const row = document.createElement('div');
-    row.className = 'faq-row bg-[#1f2937]/50 border border-white/10 rounded-xl p-5 relative';
+    row.className = 'faq-row bg-white/5/50 border border-white/10 rounded-xl p-5 relative';
     row.innerHTML = `
         <button type="button" onclick="this.closest('.faq-row').remove()" class="absolute top-4 right-4 text-white/20 hover:text-red-400 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
