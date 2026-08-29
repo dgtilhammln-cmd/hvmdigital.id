@@ -20,18 +20,17 @@
 </head>
 <body class="antialiased bg-white min-h-screen flex text-gray-900">
 
-    {{-- KIRI: Banner / Brand Area (Gradasi Hitam) --}}
-    <div class="hidden lg:flex lg:w-5/12 xl:w-1/2 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative flex-col justify-between p-12 xl:p-20 overflow-hidden shadow-2xl z-10">
-        {{-- Background Pattern/Glow --}}
-        <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px); background-size: 60px 60px;"></div>
-        <div class="absolute -top-40 -left-40 w-96 h-96 bg-gray-700 rounded-full blur-[120px] opacity-30"></div>
-        <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-gray-800 rounded-full blur-[100px] opacity-40"></div>
+    {{-- KIRI: Banner / Brand Area (Gradasi Hitam Murni) --}}
+    <div class="hidden lg:flex lg:w-5/12 xl:w-1/2 bg-gradient-to-br from-black via-zinc-900 to-black relative flex-col justify-between p-12 xl:p-20 overflow-hidden shadow-2xl z-10">
+        {{-- Background Pattern/Glow (Tanpa kotak-kotak) --}}
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-zinc-800 rounded-full blur-[120px] opacity-30"></div>
+        <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-zinc-700 rounded-full blur-[100px] opacity-20"></div>
         
         <div class="relative z-10">
             {{-- Logo Utama --}}
             <div class="mb-20">
                 @php
-                    $logoUrl = setting('logo_light') ? get_image_url(setting('logo_light')) : asset('assets/images/logo.png');
+                    $logoUrl = setting('logo_white') ? get_image_url(setting('logo_white')) : (setting('logo') ? get_image_url(setting('logo')) : asset('images/logohvm.png'));
                 @endphp
                 <img src="{{ $logoUrl }}" alt="HVM Digital" class="h-10 object-contain">
             </div>
@@ -54,11 +53,11 @@
     {{-- KANAN: Login Form --}}
     <div class="w-full lg:w-7/12 xl:w-1/2 flex flex-col justify-center px-8 sm:px-16 md:px-24 lg:px-20 xl:px-32 relative bg-white">
         {{-- Mobile Logo (Hanya tampil di mobile) --}}
-        <div class="lg:hidden flex items-center mb-12">
+        <div class="lg:hidden flex items-center mb-12 bg-black p-3 rounded-xl w-max">
             @php
-                $logoDark = setting('logo_dark') ? get_image_url(setting('logo_dark')) : asset('assets/images/logo.png');
+                $logoDark = setting('logo_white') ? get_image_url(setting('logo_white')) : (setting('logo') ? get_image_url(setting('logo')) : asset('images/logohvm.png'));
             @endphp
-            <img src="{{ $logoDark }}" alt="HVM Digital" class="h-10 object-contain">
+            <img src="{{ $logoDark }}" alt="HVM Digital" class="h-8 object-contain">
         </div>
 
         <div class="w-full max-w-md mx-auto lg:mx-0">
