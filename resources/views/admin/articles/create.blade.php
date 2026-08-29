@@ -97,49 +97,62 @@ $catJson = json_encode($categories->map(function($p) {
                 <div class="bg-[#0d1f15] border border-white/5 rounded-2xl p-6">
                     <div class="flex items-center justify-between mb-3">
                         <label class="text-white/50 text-xs font-medium tracking-wider uppercase">Konten Artikel</label>
+                        <div class="flex gap-2">
+                            <button type="button" id="btn-visual" onclick="switchEditor('visual')"
+                                    class="text-xs px-3 py-1.5 rounded-lg bg-white text-black font-semibold shadow-sm transition-all">
+                                👁 Visual Editor
+                            </button>
+                            <button type="button" id="btn-html" onclick="switchEditor('html')"
+                                    class="text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium">
+                                &lt;/&gt; HTML / Code
+                            </button>
+                        </div>
                     </div>
 
-                    <div id="editor-container" style="background: #ffffff; color: #111827; border-radius: 0 0 16px 16px; min-height: 400px; font-size: 15px; font-family: 'Montserrat', sans-serif;">
-                        {!! old('content') !!}
+                    {{-- Visual Editor (Quill) --}}
+                    <div id="visual-editor-wrap">
+                        <div id="editor-container" class="prose max-w-none" style="background: #ffffff; color: #111827; border-radius: 0 0 16px 16px; min-height: 400px; font-size: 15px; font-family: 'Montserrat', sans-serif;">
+                            {!! old('content') !!}
+                        </div>
                     </div>
+
+                    {{-- Raw HTML Editor --}}
+                    <div id="html-editor-wrap" class="hidden">
+                        <textarea id="content-raw" rows="20"
+                                  class="w-full bg-[#0a1f12] border border-white/10 text-[#9acb03] font-mono text-xs p-4 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all resize-y leading-relaxed"></textarea>
+                    </div>
+
                     <input type="hidden" name="content" id="content-input">
+                    <p class="text-white/30 text-[11px] mt-3 font-light">Gunakan Visual Editor untuk mengetik normal. Gunakan HTML/Code jika ingin menanam (embed) script khusus.</p>
+
                     <style>
+                        /* Quill Toolbar styling */
                         .ql-toolbar.ql-snow {
                             background: #f9fafb;
                             border: none;
                             border-bottom: 1px solid #e5e7eb;
                             border-radius: 16px 16px 0 0;
-                            padding: 12px;
+                            padding: 12px 16px;
+                            font-family: inherit;
                         }
                         .ql-container.ql-snow {
                             border: none;
                         }
+                        /* Typography reset for Quill Editor */
                         .ql-editor {
                             min-height: 400px;
-                            padding: 20px 24px;
+                            padding: 32px;
+                            line-height: 1.8;
                         }
-                        .ql-editor h2 { font-size: 1.5em; font-weight: 700; margin-bottom: 0.5em; color: #111827; }
-                        .ql-editor h3 { font-size: 1.25em; font-weight: 600; margin-bottom: 0.5em; color: #111827; }
-                        .ql-editor p { margin-bottom: 1em; line-height: 1.6; }
-                        .ql-editor a { color: #075749; text-decoration: underline; }
-                        /* Fix fullscreen overlap */
-                        .ql-container.ql-snow.ql-fullscreen {
-                            position: fixed !important;
-                            top: 0 !important;
-                            left: 0 !important;
-                            width: 100vw !important;
-                            height: 100vh !important;
-                            z-index: 9999 !important;
-                            background: white;
-                        }
-                        .ql-toolbar.ql-fullscreen {
-                            position: fixed !important;
-                            top: 0 !important;
-                            left: 0 !important;
-                            width: 100vw !important;
-                            z-index: 10000 !important;
-                            background: #f9fafb;
-                        }
+                        .ql-editor h1 { font-size: 2.25em; font-weight: 800; margin-top: 1.5em; margin-bottom: 0.8em; color: #000; line-height: 1.2; }
+                        .ql-editor h2 { font-size: 1.75em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.8em; color: #000; line-height: 1.3; }
+                        .ql-editor h3 { font-size: 1.35em; font-weight: 700; margin-top: 1.2em; margin-bottom: 0.6em; color: #111827; line-height: 1.4; }
+                        .ql-editor p { margin-bottom: 1.2em; }
+                        .ql-editor ul, .ql-editor ol { margin-bottom: 1.2em; padding-left: 1.5em; }
+                        .ql-editor li { margin-bottom: 0.5em; }
+                        .ql-editor a { color: #075749; text-decoration: underline; font-weight: 600; }
+                        .ql-editor blockquote { border-left: 4px solid #9acb03; padding-left: 1rem; color: #4b5563; font-style: italic; margin: 1.5em 0; }
+                        .ql-editor pre { background: #111827; color: #e5e7eb; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.2em; }
                     </style>
                 </div>
 
@@ -335,20 +348,23 @@ $catJson = json_encode($categories->map(function($p) {
 </div>
 
 @push('scripts')
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <script>
 let quill;
+let currentMode = 'visual';
 
 function initEditor() {
     quill = new Quill('#editor-container', {
         theme: 'snow',
-        placeholder: 'Tulis isi artikel di sini...',
+        placeholder: 'Ketik isi artikel dengan profesional di sini...',
         modules: {
             toolbar: [
-                [{ 'header': [2, 3, false] }],
+                [{ 'header': [1, 2, 3, false] }],
                 ['bold', 'italic', 'underline', 'strike'],
                 ['blockquote', 'code-block'],
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'align': [] }],
                 ['link', 'image', 'video'],
                 ['clean']
             ],
@@ -370,9 +386,39 @@ function initEditor() {
     });
 }
 
+function switchEditor(mode) {
+    currentMode = mode;
+    const visualWrap = document.getElementById('visual-editor-wrap');
+    const htmlWrap   = document.getElementById('html-editor-wrap');
+    const btnVisual  = document.getElementById('btn-visual');
+    const btnHtml    = document.getElementById('btn-html');
+    const rawInput   = document.getElementById('content-raw');
+
+    if (mode === 'html') {
+        visualWrap.classList.add('hidden');
+        htmlWrap.classList.remove('hidden');
+        btnHtml.className   = 'text-xs px-3 py-1.5 rounded-lg bg-white text-black font-semibold shadow-sm transition-all';
+        btnVisual.className = 'text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium';
+        
+        // Sync Visual to HTML
+        rawInput.value = quill.root.innerHTML;
+    } else {
+        htmlWrap.classList.add('hidden');
+        visualWrap.classList.remove('hidden');
+        btnVisual.className = 'text-xs px-3 py-1.5 rounded-lg bg-white text-black font-semibold shadow-sm transition-all';
+        btnHtml.className   = 'text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 transition-all font-medium';
+        
+        // Sync HTML to Visual
+        quill.clipboard.dangerouslyPasteHTML(rawInput.value);
+    }
+}
+
 document.getElementById('article-form').addEventListener('submit', function() {
-    // Save Quill content to hidden input
-    document.getElementById('content-input').value = quill.root.innerHTML;
+    if (currentMode === 'visual') {
+        document.getElementById('content-input').value = quill.root.innerHTML;
+    } else {
+        document.getElementById('content-input').value = document.getElementById('content-raw').value;
+    }
 });
 
 // ─── Character Counters ───────────────────────────────────────────────────────
