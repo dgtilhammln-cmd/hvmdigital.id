@@ -1,4 +1,4 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 @section('title','Edit — '.$article->title)
 @section('page-title','Edit Artikel')
 
@@ -82,29 +82,53 @@
                               placeholder="Ringkasan singkat artikel...">{{ old('excerpt', $article->excerpt) }}</textarea>
                 </div>
 
-                {{-- KONTEN - EasyMDE Editor --}}
+                {{-- KONTEN - QuillJS Editor --}}
                 <div class="bg-[#0d1f15] border border-white/5 rounded-2xl p-6">
                     <div class="flex items-center justify-between mb-3">
                         <label class="text-white/50 text-xs font-medium tracking-wider uppercase">Konten Artikel</label>
-                        <div class="flex gap-2">
-                            <button type="button" id="btn-md" onclick="switchEditorMode('markdown')"
-                                    class="text-xs px-3 py-1.5 rounded-lg bg-[#9acb03]/20 text-[#9acb03] border border-[#9acb03]/30 font-medium">
-                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> Markdown
-                            </button>
-                            <button type="button" id="btn-html" onclick="switchEditorMode('html')"
-                                    class="text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/40 border border-white/10 font-medium">
-                                &lt;/&gt; HTML/Code
-                            </button>
-                        </div>
                     </div>
-                    <div id="md-editor-wrap">
-                        <textarea id="content-md" name="content_md">{{ old('content', $article->content) }}</textarea>
+                    <div id="editor-container" style="background: #ffffff; color: #111827; border-radius: 0 0 16px 16px; min-height: 400px; font-size: 15px; font-family: 'Montserrat', sans-serif;">
+                        {!! old('content', $article->content) !!}
                     </div>
-                    <div id="html-editor-wrap" class="hidden">
-                        <textarea name="content" id="content-raw" rows="20"
-                                  class="w-full bg-black/40 border border-white/10 text-green-400 font-mono text-xs px-4 py-4 rounded-xl focus:outline-none focus:border-[#9acb03]/50 transition-all resize-y">{{ old('content', $article->content) }}</textarea>
-                    </div>
-                    <p class="text-white/20 text-[11px] mt-2 font-light">Mode Markdown: tulis dengan sintaks MD. Mode HTML: tulis raw HTML/embed kode.</p>
+                    <input type="hidden" name="content" id="content-input">
+                    <style>
+                        .ql-toolbar.ql-snow {
+                            background: #f9fafb;
+                            border: none;
+                            border-bottom: 1px solid #e5e7eb;
+                            border-radius: 16px 16px 0 0;
+                            padding: 12px;
+                        }
+                        .ql-container.ql-snow {
+                            border: none;
+                        }
+                        .ql-editor {
+                            min-height: 400px;
+                            padding: 20px 24px;
+                        }
+                        .ql-editor h2 { font-size: 1.5em; font-weight: 700; margin-bottom: 0.5em; color: #111827; }
+                        .ql-editor h3 { font-size: 1.25em; font-weight: 600; margin-bottom: 0.5em; color: #111827; }
+                        .ql-editor p { margin-bottom: 1em; line-height: 1.6; }
+                        .ql-editor a { color: #075749; text-decoration: underline; }
+                        /* Fix fullscreen overlap */
+                        .ql-container.ql-snow.ql-fullscreen {
+                            position: fixed !important;
+                            top: 0 !important;
+                            left: 0 !important;
+                            width: 100vw !important;
+                            height: 100vh !important;
+                            z-index: 9999 !important;
+                            background: white;
+                        }
+                        .ql-toolbar.ql-fullscreen {
+                            position: fixed !important;
+                            top: 0 !important;
+                            left: 0 !important;
+                            width: 100vw !important;
+                            z-index: 10000 !important;
+                            background: #f9fafb;
+                        }
+                    </style>
                 </div>
 
                 {{-- FAQs --}}
@@ -306,59 +330,45 @@
     </form>
 </div>
 
-@push('scripts')
-<script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-<script src="https://unpkg.com/turndown/dist/turndown.js"></script>
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <script>
-let easyMDE;
-let currentMode = 'markdown';
-let turndownService;
+let quill;
 
 function initEditor() {
-    turndownService = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
-    easyMDE = new EasyMDE({
-        element: document.getElementById('content-md'),
-        spellChecker: false,
-        autofocus: false,
-        toolbar: ['bold','italic','heading','|','quote','unordered-list','ordered-list','|','link','image','|','preview','side-by-side','fullscreen','|','guide'],
-        minHeight: '400px',
-    });
-
-    // Auto-convert raw HTML to clean Markdown if present
-    const val = easyMDE.value();
-    if (val && (val.includes('<p>') || val.includes('<h1>') || val.includes('<h2>') || val.includes('<article>') || val.includes('<strong>'))) {
-        easyMDE.value(turndownService.turndown(val));
-    }
-}
-
-function switchEditorMode(mode) {
-    currentMode = mode;
-    const mdWrap   = document.getElementById('md-editor-wrap');
-    const htmlWrap = document.getElementById('html-editor-wrap');
-    if (mode === 'markdown') {
-        mdWrap.classList.remove('hidden'); htmlWrap.classList.add('hidden');
-        document.getElementById('btn-md').className   = 'text-xs px-3 py-1.5 rounded-lg bg-[#9acb03]/20 text-[#9acb03] border border-[#9acb03]/30 font-medium';
-        document.getElementById('btn-html').className = 'text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/40 border border-white/10 font-medium';
-        const rawVal = document.getElementById('content-raw').value;
-        if (rawVal) {
-            easyMDE.value(turndownService.turndown(rawVal));
+    quill = new Quill('#editor-container', {
+        theme: 'snow',
+        placeholder: 'Tulis isi artikel di sini...',
+        modules: {
+            toolbar: [
+                [{ 'header': [2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                ['blockquote', 'code-block'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['link', 'image', 'video'],
+                ['clean']
+            ],
+            keyboard: {
+                bindings: {
+                    link: {
+                        key: 'k',
+                        shortKey: true,
+                        handler: function(range, context) {
+                            var value = prompt('Masukkan URL hyperlink:');
+                            if (value) {
+                                this.quill.format('link', value);
+                            }
+                        }
+                    }
+                }
+            }
         }
-    } else {
-        mdWrap.classList.add('hidden'); htmlWrap.classList.remove('hidden');
-        document.getElementById('btn-md').className   = 'text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/40 border border-white/10 font-medium';
-        document.getElementById('btn-html').className = 'text-xs px-3 py-1.5 rounded-lg bg-[#9acb03]/20 text-[#9acb03] border border-[#9acb03]/30 font-medium';
-        document.getElementById('content-raw').value = easyMDE.options.previewRender(easyMDE.value());
-    }
+    });
 }
 
 document.getElementById('article-form').addEventListener('submit', function() {
-    if (currentMode === 'markdown') {
-        document.getElementById('content-md').name  = 'content';
-        document.getElementById('content-raw').name = 'content_raw_disabled';
-    } else {
-        document.getElementById('content-md').name  = 'content_md_disabled';
-        document.getElementById('content-raw').name = 'content';
-    }
+    // Save Quill content to hidden input
+    document.getElementById('content-input').value = quill.root.innerHTML;
 });
 
 function setupCounter(inputId, counterId, max, warnAt) {
