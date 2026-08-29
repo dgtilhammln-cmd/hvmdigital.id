@@ -372,7 +372,7 @@
         </header>
 
         {{-- Content --}}
-        <main style="flex:1;padding:24px 28px;">
+        <main style="flex:1;padding:24px 28px;background:#071210;min-height:100vh;">
             @if(session('success'))
             <div class="alert-success">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
