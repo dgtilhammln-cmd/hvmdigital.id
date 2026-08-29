@@ -68,15 +68,15 @@
         .admin-main {
             margin-left: 240px;
             min-height: 100vh;
-            background: #f1f5f2;
+            background: #071210;
             display: flex;
             flex-direction: column;
         }
 
         /* Topbar */
         .admin-topbar {
-            background: #fff;
-            border-bottom: 1px solid #e5e7eb;
+            background: #0a0a0a;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
             padding: 0 28px;
             height: 60px;
             display: flex;
@@ -355,18 +355,18 @@
                     <svg width="20" height="20" fill="none" stroke="#374151" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
                 <div>
-                    <h1 style="font-size:16px;font-weight:700;color:#111827;margin:0;line-height:1.2;">@yield('page-title', 'Dashboard')</h1>
-                    <p style="font-size:11px;color:#9ca3af;margin:0;font-weight:400;">@yield('page-subtitle', 'Selamat datang kembali di panel admin HVM Digital')</p>
+                    <h1 style="font-size:16px;font-weight:700;color:#ffffff;margin:0;line-height:1.2;">@yield('page-title', 'Dashboard')</h1>
+                    <p style="font-size:11px;color:rgba(255,255,255,0.35);margin:0;font-weight:400;">@yield('page-subtitle', 'Selamat datang kembali di panel admin HVM Digital')</p>
                 </div>
             </div>
             <div style="display:flex;align-items:center;gap:16px;">
-                <a href="{{ route('home') }}" target="_blank" style="display:flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:500;text-decoration:none;transition:all 0.2s;">
+                <a href="{{ route('home') }}" target="_blank" style="display:flex;align-items:center;gap:6px;background:rgba(154,203,3,0.1);border:1px solid rgba(154,203,3,0.3);color:#9acb03;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:500;text-decoration:none;transition:all 0.2s;">
                     <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                     Lihat Website
                 </a>
                 <div style="display:flex;align-items:center;gap:8px;">
                     <div style="width:32px;height:32px;background:linear-gradient(135deg,#9acb03,#075749);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;">{{ strtoupper(substr(session('admin_name','A'),0,1)) }}</div>
-                    <span style="font-size:13px;font-weight:500;color:#374151;">{{ session('admin_name','Admin') }}</span>
+                    <span style="font-size:13px;font-weight:500;color:#ffffff;">{{ session('admin_name','Admin') }}</span>
                 </div>
             </div>
         </header>
