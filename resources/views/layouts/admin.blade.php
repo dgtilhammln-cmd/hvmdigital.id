@@ -26,7 +26,7 @@
 
         /* Sidebar */
         .admin-sidebar {
-            background: #0d1f15;
+            background: #0a0a0a;
             width: 240px;
             min-height: 100vh;
             position: fixed;
@@ -48,14 +48,14 @@
             border-radius: 10px;
             font-size: 13px;
             font-weight: 400;
-            color: rgba(255,255,255,0.45);
+            color: rgba(255,255,255,0.5);
             transition: all 0.2s ease;
             text-decoration: none;
             margin-bottom: 2px;
         }
         .nav-item:hover {
-            background: rgba(255,255,255,0.05);
-            color: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.07);
+            color: rgba(255,255,255,0.9);
         }
         .nav-item.active {
             background: rgba(154,203,3,0.12);
