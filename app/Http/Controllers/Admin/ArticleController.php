@@ -54,8 +54,8 @@ class ArticleController extends Controller
             'og_image'            => 'nullable|image|max:5120',
             'custom_filename'     => 'nullable|string|max:255',
             'faqs'                => 'nullable|array',
-            'faqs.*.question'     => 'required_with:faqs|string|max:255',
-            'faqs.*.answer'       => 'required_with:faqs|string',
+            'faqs.*.question'     => 'nullable|string|max:255',
+            'faqs.*.answer'       => 'nullable|string',
         ]);
 
         $slugName = \Illuminate\Support\Str::slug($request->slug ?: $request->title);
@@ -114,8 +114,8 @@ class ArticleController extends Controller
             'og_image'            => 'nullable|image|max:5120',
             'custom_filename'     => 'nullable|string|max:255',
             'faqs'                => 'nullable|array',
-            'faqs.*.question'     => 'required_with:faqs|string|max:255',
-            'faqs.*.answer'       => 'required_with:faqs|string',
+            'faqs.*.question'     => 'nullable|string|max:255',
+            'faqs.*.answer'       => 'nullable|string',
         ]);
 
         $slugName = \Illuminate\Support\Str::slug($request->slug ?: $request->title);

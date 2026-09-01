@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 // ─── PENTING ───────────────────────────────────────────────────────────────────
 // Semua nilai domain/email TIDAK boleh ditulis hardcode di sini.
@@ -13,7 +13,7 @@ return [
     'tagline'    => 'Digital & IT Solution',
     'slogan'     => 'Growth Your Business With HVM Digital',
     'hashtag'    => '#MeroketWithHVM',
-    'philosophy' => 'Harbour Visionary Minds — pelabuhan bagi ide-ide besar',
+    'philosophy' => 'Harbour Visionary Minds - pelabuhan bagi ide-ide besar',
 
     // Otomatis ikut APP_URL di .env — tidak perlu ubah manual
     'url'        => rtrim(env('APP_URL', 'https://hvm-digital.id'), '/'),
