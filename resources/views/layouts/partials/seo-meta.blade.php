@@ -36,11 +36,11 @@
 @php
 $_ogImg = $seo['og_image'] ?? asset('images/logohvm.png');
 $_ogExt = strtolower(pathinfo(parse_url($_ogImg, PHP_URL_PATH), PATHINFO_EXTENSION));
-$_ogMime = match($_ogExt) { 'png' => 'image/png', 'jpg','jpeg' => 'image/jpeg', default => 'image/webp' };
+$_ogMime = match($_ogExt) { 'png' => 'image/png', 'jpg','jpeg' => 'image/jpeg', default => 'image/jpeg' };
 @endphp
 <meta property="og:image:type" content="{{ $_ogMime }}">
 <meta property="og:image:width" content="{{ $seo['og_image_width'] ?? '1200' }}">
-<meta property="og:image:height" content="{{ $seo['og_image_height'] ?? '630' }}">
+<meta property="og:image:height" content="{{ $seo['og_image_height'] ?? '800' }}">
 <meta property="og:image:alt" content="{{ $seo['og_title'] ?? ($seo['title'] ?? config('hvm.name')) }}">
 <meta property="og:site_name" content="{{ $seo['og_site_name'] ?? config('hvm.name') }}">
 <meta property="og:locale" content="{{ $seo['og_locale'] ?? 'id_ID' }}">
