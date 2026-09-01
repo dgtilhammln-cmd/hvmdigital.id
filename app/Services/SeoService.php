@@ -207,8 +207,14 @@ class SeoService
         }
 
         // Use og_image if specified, otherwise fallback to featured_image, else default.
+        // Must be absolute URL — WhatsApp/Facebook require full URL for og:image.
         $imagePath = $article->og_image ?: $article->featured_image;
-        $ogImage = $imagePath ? get_image_url($imagePath) : asset('images/logohvm.png');
+        if ($imagePath) {
+            $rawUrl = get_image_url($imagePath);
+            $ogImage = str_starts_with($rawUrl, 'http') ? $rawUrl : url($rawUrl);
+        } else {
+            $ogImage = url(asset('images/logohvm.png'));
+        }
 
         return $this->generate([
             'title'       => $article->meta_title ?: $article->title,
