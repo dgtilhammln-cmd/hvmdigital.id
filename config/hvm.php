@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 // ─── PENTING ───────────────────────────────────────────────────────────────────
 // Semua nilai domain/email TIDAK boleh ditulis hardcode di sini.
